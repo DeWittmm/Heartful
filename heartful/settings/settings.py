@@ -34,7 +34,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'apps.core',
+    'heartful.apps.core',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -45,10 +45,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'apps.core.middleware.WsgiLogErrors',
 )
 
-ROOT_URLCONF = 'settings.urls'
+ROOT_URLCONF = 'heartful.urls'
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
