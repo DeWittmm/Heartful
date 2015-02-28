@@ -3,11 +3,14 @@ login.sh
 HeartfulKey.pem
 /heartful/settings/wsgi.py
 
+#Consolidated Static
+/static/*
+
 # Python bytecode:
 *.py[cod]
 *.pyc
 
 #Michael Specific
-heartful/settings/urls.py
-heartful/settings/wsgi.py
-heartful/settings/settings.py
+/heartful/settings/urls.py
+/heartful/settings/wsgi.py
+/heartful/settings/settings.py
