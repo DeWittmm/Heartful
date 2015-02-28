@@ -1,0 +1,22 @@
+[Tue Feb 24 23:53:47.215338 2015] [mpm_event:notice] [pid 21752:tid 139975966549888] AH00489: Apache/2.4.7 (Ubuntu) mod_wsgi/3.4 Python/2.7.6 configured -- resuming normal operations
+[Tue Feb 24 23:53:47.215418 2015] [core:notice] [pid 21752:tid 139975966549888] AH00094: Command line: '/usr/sbin/apache2'
+[Wed Feb 25 00:00:02.133566 2015] [mpm_event:notice] [pid 21922:tid 140065484060544] AH00489: Apache/2.4.7 (Ubuntu) mod_wsgi/3.4 Python/2.7.6 configured -- resuming normal operations
+[Wed Feb 25 00:00:02.133642 2015] [core:notice] [pid 21922:tid 140065484060544] AH00094: Command line: '/usr/sbin/apache2'
+[Wed Feb 25 00:01:31.216896 2015] [mpm_event:notice] [pid 21922:tid 140065484060544] AH00491: caught SIGTERM, shutting down
+[Wed Feb 25 00:01:32.203438 2015] [mpm_event:notice] [pid 22052:tid 139771519588224] AH00489: Apache/2.4.7 (Ubuntu) mod_wsgi/3.4 Python/2.7.6 configured -- resuming normal operations
+[Wed Feb 25 00:01:32.203505 2015] [core:notice] [pid 22052:tid 139771519588224] AH00094: Command line: '/usr/sbin/apache2'
+[Wed Feb 25 00:06:03.448483 2015] [mpm_event:notice] [pid 22052:tid 139771519588224] AH00491: caught SIGTERM, shutting down
+[Wed Feb 25 00:06:04.436348 2015] [mpm_event:notice] [pid 22272:tid 140627712243584] AH00489: Apache/2.4.7 (Ubuntu) mod_wsgi/3.4 Python/2.7.6 configured -- resuming normal operations
+[Wed Feb 25 00:06:04.436420 2015] [core:notice] [pid 22272:tid 140627712243584] AH00094: Command line: '/usr/sbin/apache2'
+[Wed Feb 25 00:09:18.278778 2015] [mpm_event:notice] [pid 22272:tid 140627712243584] AH00491: caught SIGTERM, shutting down
+[Wed Feb 25 00:09:19.265344 2015] [mpm_event:notice] [pid 22511:tid 139758403356544] AH00489: Apache/2.4.7 (Ubuntu) mod_wsgi/3.4 Python/2.7.6 configured -- resuming normal operations
+[Wed Feb 25 00:09:19.265411 2015] [core:notice] [pid 22511:tid 139758403356544] AH00094: Command line: '/usr/sbin/apache2'
+[Wed Feb 25 00:10:39.652422 2015] [mpm_event:notice] [pid 22511:tid 139758403356544] AH00491: caught SIGTERM, shutting down
+[Wed Feb 25 00:10:40.640581 2015] [mpm_event:notice] [pid 22637:tid 140223749633920] AH00489: Apache/2.4.7 (Ubuntu) mod_wsgi/3.4 Python/2.7.6 configured -- resuming normal operations
+[Wed Feb 25 00:10:40.640648 2015] [core:notice] [pid 22637:tid 140223749633920] AH00094: Command line: '/usr/sbin/apache2'
+[Wed Feb 25 00:12:57.220785 2015] [mpm_event:notice] [pid 22637:tid 140223749633920] AH00491: caught SIGTERM, shutting down
+[Wed Feb 25 00:12:58.208690 2015] [mpm_event:notice] [pid 22771:tid 140036734785408] AH00489: Apache/2.4.7 (Ubuntu) mod_wsgi/3.4 Python/2.7.6 configured -- resuming normal operations
+[Wed Feb 25 00:12:58.208762 2015] [core:notice] [pid 22771:tid 140036734785408] AH00094: Command line: '/usr/sbin/apache2'
+[Wed Feb 25 00:16:05.373699 2015] [mpm_event:notice] [pid 22771:tid 140036734785408] AH00491: caught SIGTERM, shutting down
+[Wed Feb 25 00:16:06.359848 2015] [mpm_event:notice] [pid 22909:tid 140549772195712] AH00489: Apache/2.4.7 (Ubuntu) mod_wsgi/3.4 Python/2.7.6 configured -- resuming normal operations
+[Wed Feb 25 00:16:06.359919 2015] [core:notice] [pid 22909:tid 140549772195712] AH00094: Command line: '/usr/sbin/apache2'

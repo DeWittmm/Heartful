@@ -47,11 +47,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'settings.urls'
+ROOT_URLCONF = 'urls'
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-WSGI_APPLICATION = 'settings.wsgi.application'
+WSGI_APPLICATION = 'wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
