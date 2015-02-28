@@ -10,7 +10,7 @@ from .serializers import *
 class DataTypes(APIView):
 	def get(self, request, format=None):
 		dataTypes = DataType.objects.all()
-		serializer = DataTypeSerializer(dataTypes, many=True) 
+		serializer = DataTypeSerializer(dataTypes, many=True)
 		return Response(serializer.data)
 	def post(self, request, format=None):
 		serializer = DataTypeSerializer(data=request.DATA)
@@ -18,13 +18,17 @@ class DataTypes(APIView):
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
- 
-		
+
+class UserTest(APIView):
+    def get(self, request, format=None):
+        to_json = {"user":"test"}
+        return HttpResponse(json.dumps(to_json), content_type='application/json')
+
 class httpResponse(APIView):
 	def get(self, request, format=None):
 		to_json = {"Test": 1}
 		return HttpResponse(json.dumps(to_json), content_type='application/json')
-		
+
 class IndexView(APIView):
 	def get(self, request, format=None):
 		template = loader.get_template("core/index.html")
@@ -33,4 +37,3 @@ class IndexView(APIView):
 
 	# form_class = UserRegistrationForm
 	# success_url = reverse_lazy("organizations")
-

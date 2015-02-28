@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 
-from apps.core.views import IndexView, DataTypes, httpResponse
+from apps.core.views import IndexView, DataTypes, httpResponse, UserTest
 
 #Static
 urlpatterns = [
@@ -14,5 +14,6 @@ url(r'^aboutUs.html/$', TemplateView.as_view(template_name='aboutUs.html')),
 urlpatterns += [
 	url(r'^dataTypes/$', DataTypes.as_view(), name='dataTypes'),
 	url(r'^test/$', httpResponse.as_view(), name='httpTest'),
-	url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+	url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+	url(r'^user/$', UserTest.as_view(), name='userTest'),
 ]
