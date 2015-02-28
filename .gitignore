@@ -1,6 +1,7 @@
-# Base level 
+# Base level
 login.sh
 HeartfulKey.pem
+/heartful/settings/wsgi.py
 
 # Python bytecode:
 *.py[cod]
