@@ -45,7 +45,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'apps.core.middleware.WsgiLogErrors',
 )
 
 ROOT_URLCONF = 'settings.urls'
@@ -109,4 +108,3 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
     'django.template.loaders.eggs.Loader',
 )
-
