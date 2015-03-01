@@ -30,8 +30,8 @@ class UserTest(APIView):
 #			return Response(serializer.data, status=status.HTTP_200_OK)
 #		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	def get(self, request, format=None):
-		dataTypes = DataType.objects.all()
-		serializer = DataTypeSerializer(dataTypes, many=True)
+		users = User.objects.all()
+		serializer = UserSerializer(users, many=True)
 		return Response(serializer.data)
 	def post(self, request, format=None):
 		serializer = UserSerializer(data=request.DATA)
