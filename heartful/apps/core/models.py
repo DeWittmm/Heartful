@@ -14,9 +14,12 @@ class HRVariability(DataSet):
    #5minHRAverage = models.FloatField()
 
 class User(models.Model):
-   user_name = models.CharField(max_length=100)
-   password = models.CharField(max_length=50)
-   personal_data = models.ForeignKey(DataSet)
+   googleid = models.CharField(max_length=100)
+   name = models.CharField(max_length=100)
+   #personal_data = models.ForeignKey(DataSet)
+   heartrate = models.IntegerField(default=0)
+   sp02 = models.IntegerField(default=0)
+   age = models.IntegerField(default=0)
 
 class Stat(models.Model):
    average = models.IntegerField(default=0)
