@@ -7,6 +7,8 @@ from django.http import Http404, HttpResponseBadRequest, HttpResponse
 
 from .serializers import *
 
+from .heartRateAnalyzer import *
+
 class DataTypes(APIView):
 	def get(self, request, format=None):
 		dataTypes = DataType.objects.all()
@@ -18,7 +20,7 @@ class DataTypes(APIView):
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+		
 class UserTest(APIView):
 #    def get(self, request, format=None):
 #        to_json = {"user":"test"}
@@ -42,6 +44,16 @@ class UserTest(APIView):
 		else:
 			#serializer.errors
 			return HttpResponse(json.dumps({"user": "2"}), content_type='application/json')
+
+class HeartRateInfo(APIView):
+	def get(self, request, format=None):
+		age = request.DATA.get("age", 0)
+		if age <= 0:
+			return HttpResponseBadRequest("Invalid Age")
+
+		analyzer = HeartRateAnalyzer()
+		max_hr = {"max_hr": analyzer.maxHR(age)}
+		return HttpResponse(json.dumps(max_hr), content_type='application/json')
 
 class httpResponse(APIView):
 	def get(self, request, format=None):

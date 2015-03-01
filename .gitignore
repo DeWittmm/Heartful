@@ -1,7 +1,10 @@
 # Base level
 login.sh
 HeartfulKey.pem
-/heartful/settings/wsgi.py
+/heartful/settings/settings.py
+
+#Consolidated Static
+/static/*
 
 # Python bytecode:
 *.py[cod]
