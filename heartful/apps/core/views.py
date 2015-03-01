@@ -1,3 +1,4 @@
+import logging, logging.config
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,7 +21,7 @@ class DataTypes(APIView):
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-		
+
 class UserTest(APIView):
 #    def get(self, request, format=None):
 #        to_json = {"user":"test"}
@@ -47,7 +48,8 @@ class UserTest(APIView):
 
 class HeartRateInfo(APIView):
 	def get(self, request, format=None):
-		age = request.DATA.get("age", 0)
+		age = request.GET.get("age", 0)
+		logging.info("testing age: " + age)
 		if age <= 0:
 			return HttpResponseBadRequest("Invalid Age")
 

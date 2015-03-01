@@ -1,7 +1,7 @@
 
 
 class HeartRateAnalyzer():
-	def maxHR(age):
+	def maxHR(self, age):
 		if age < 20:
 			return 200
 		elif age < 30:
@@ -14,9 +14,9 @@ class HeartRateAnalyzer():
 			return 175
 		else:
 			return 170
-			
+
 	#Returns (50%, 85%)
-	def targetHRZone(age):
+	def targetHRZone(self, age):
 		if age < 20:
 			return (100, 170,)
 		elif age < 30:
