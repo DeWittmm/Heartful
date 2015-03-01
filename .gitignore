@@ -1,7 +1,7 @@
 # Base level
 login.sh
 HeartfulKey.pem
-/heartful/settings/settings.py
+heartful/settings/settings.py
 
 #Consolidated Static
 /static/*
