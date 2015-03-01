@@ -105,14 +105,13 @@ function signinCallback(authResult) {
                'userId': 'me'
             });
             request.execute(function(resp) {
-              user.userName = resp.displayName
-              user.userId = resp.result.id
-              console.log(user.userName + " " + user.userId)
+              user.userName = resp.displayName;
+              user.userId = resp.result.id;
+              console.log(user.userName + " " + user.userId);
 
               //hide sign in button and show name instead
-              $("#googleSignInButton").css("display" : none)
-              $("#userName").append("<p>" + user.userName + "</p>")
-
+              $("#googleSignInButton").css("display" : "none");
+              $("#userName").append("<p>" + user.userName + "</p>");
             });
         });
     } else {
