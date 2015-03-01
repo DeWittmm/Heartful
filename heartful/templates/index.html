@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-{% load staticfiles %}
+{% load staticfiles %} 
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -8,18 +8,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="./images/heart.ico">
+    <link rel="icon" href="{% static 'images/heart.ico' %}">
 
     <title>Heartful</title>
 
     <!-- Bootstrap core CSS and our CSS  -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link href="{% static 'css/index.css' %}" rel="stylesheet">
+    
 
     <!-- AJAX 2.X, bootstrap (ajax dependent), our script (ajax and bootstrap dependent) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     <script src="{% static 'js/script.js' %}"></script>
+    <script src="https://apis.google.com/js/client:platform.js" async defer></script>
+
+    <!-- Local testing paths -->
+    <!-- <script src="../static/js/script.js"></script> -->
+    <!-- <link rel="stylesheet" type="text/css" href="../static/css/index.css"> -->
   </head>
 
   <body>
@@ -34,17 +40,29 @@
             <span class="icon-bar"></span>
           </button>
           <div class="row">
-            <div class="col-md-4"><img class="navBarHeart" src="{% static 'images/heart_transparent.gif' %}"></div>
+            <div class="col-md-4"><img class="navBarHeart" src="{% static 'images/heart_transparent.gif' %}"></div> 
             <div class="col-md-4"><p class="navbar-brand">Heartful</p></div>
           </div>
 
         </div>
         <div id="navbar" class="navbar-collapse collapse">
+          <div id="userName"></div>
           <form class="navbar-form navbar-right">
-            <button type="submit" class="btn btn-success" data-toggle="modal" data-target="#signInModal">Sign in</button>
-            <button type="submit" class="btn btn-info" data-toggle="modal" data-target="#newUserModal">Create User</button>
+            <!--<button type="submit" class="btn btn-success" data-toggle="modal" onclick="signIn()" data-target="#signInModal">Sign in</button>
+            <button type="submit" class="btn btn-info" data-toggle="modal" onclick="createUser()" data-target="#newUserModal">Create User</button> -->
+            <span class="btn">
+              <span
+                class="g-signin"
+                data-callback="signinCallback"
+                data-clientid="739218324274-t2mkmq4hlkmadqp56fv3uop0bv6bp9ke.apps.googleusercontent.com"
+                data-cookiepolicy="single_host_origin"
+                data-requestvisibleactions="http://schema.org/AddAction"
+                data-scope="https://www.googleapis.com/auth/plus.login">
+              </span>
+            </span>
           </form>
         </div>
+        
       </div>
     </nav>
 
@@ -55,7 +73,7 @@
       </div>
     </div>
 
-    <div class="container">
+    <div id="pageContent" class="container">
       <div id="tileContent">
         <!-- first row of 'tiles' -->
         <div class="row">
@@ -74,34 +92,37 @@
         </div>
         <!-- second row of 'tiles' -->
         <div class="row">
-          <div class="col-md-4 col-md-offset-2 centerAlignText">
+          <div class="col-md-4 centerAlignText">
             <h2>Target Exercise<br>Ranges</h2>
             <p><a class="btn btn-info"  onclick="showTile('intensity')" role="button">Need help determining<br>how hard to exercise? &raquo;</a></p>
           </div>
-          <div class="centerAlignText">
+          <div class="col-md-4 centerAlignText">
             <h2><br>Other Users</h2>
             <p><a class="btn btn-info" onclick="showTile('otherUsers')" role="button">See how you stack up<br>against other Heartful users &raquo;</a></p>
+         </div>
+         <div class="col-md-4 centerAlignText">
+            <h2><br>My Data</h2>
+            <p><a class="btn btn-info" onclick="showTile('myData')" role="button">Manually enter health<br>data &raquo;</a></p>
          </div>
         </div>
       </div>  
 
       <!-- TILE DETAIL AREA -->
       <div id="tileDetail"></div>
+    </div>  
 
 
-      <div class="footer">
-        <br>
-        <footer>  
-          <div class="bs-docs-social">
-            <ul class="content bs-docs-social-buttons">
-              <li><p >&copy; DeWitt, Lewson, Shaffer</p></li>
-              <li><a id="aboutUs" href="./aboutUs.html">About Us</a></li>
-            </ul>
-          </div>
-        </footer>
-      <div>
-
-    </div> <!-- /container -->
+    <div class="footer">
+      <br>
+      <footer>  
+        <div class="bs-docs-social">
+          <ul class="content bs-docs-social-buttons">
+            <li><p >&copy; DeWitt, Lewson, Shaffer</p></li>
+            <li><a id="aboutUs" href="./aboutUs.html">About Us</a></li>
+          </ul>
+        </div>
+      </footer>
+    <div>
 
     <!-- BEGIN MODAL DEFINITIONS -->
 
@@ -170,7 +191,34 @@
       </div>
     </div>
 
-
-
+    <!-- manualDataEntryModal -->
+    <div class="modal fade customModal" id="manualDataEntryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Enter new health data</h4>
+          </div>
+          <div class="modal-body">
+            <p> </p>     
+            <form class="form">
+              <div class="form-group">
+                <p>Heart rate</p>
+                <input type="text" placeholder="(bpm)" class="form-control">
+              </div>
+              <div class="form-group">
+                <p>Blood Oxygenation</p>
+                <input type="text" placeholder="(% O2)" class="form-control">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
   </body>
 </html>
