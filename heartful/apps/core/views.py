@@ -23,15 +23,6 @@ class DataTypes(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserTest(APIView):
-#    def get(self, request, format=None):
-#        to_json = {"user":"test"}
-#        return HttpResponse(json.dumps(to_json), content_type='application/json')
-#	def post(self, request, *args, **kwargs):
-#		console.log("usertest post")
-#		if serializer.is_valid():
-#			serializer.save()
-#			return Response(serializer.data, status=status.HTTP_200_OK)
-#		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 	def get(self, request, format=None):
 		users = User.objects.all()
 		serializer = UserSerializer(users, many=True)
@@ -41,9 +32,7 @@ class UserTest(APIView):
 		if serializer.is_valid(raise_exception=True):
 			serializer.save()
 			return Response(serializer.data, status=status.HTTP_200_OK)
-			#return HttpResponse(json.dumps({"user": "1"}), content_type='application/json')
 		else:
-			#serializer.errors
 			return HttpResponse(json.dumps({"user": "2"}), content_type='application/json')
 
 class HeartRateInfo(APIView):
