@@ -1,4 +1,3 @@
-import logging, logging.config
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,7 +6,6 @@ import json
 from django.http import Http404, HttpResponseBadRequest, HttpResponse
 
 from .serializers import *
-
 from .heartRateAnalyzer import *
 
 class DataTypes(APIView):
@@ -37,8 +35,8 @@ class UserTest(APIView):
 
 class HeartRateInfo(APIView):
 	def get(self, request, format=None):
-		age = request.GET.get("age", 0)
-		logging.info("testing age: " + age)
+		age = int(request.GET.get("age", 0))
+		print("testing age: " + str(age))
 		if age <= 0:
 			return HttpResponseBadRequest("Invalid Age")
 
