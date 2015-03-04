@@ -36,12 +36,12 @@ class UserTest(APIView):
 class HeartRateInfo(APIView):
 	def get(self, request, format=None):
 		age = int(request.GET.get("age", 0))
-		print("testing age: " + str(age))
+		print("Testing age: " + str(age))
 		if age <= 0:
 			return HttpResponseBadRequest("Invalid Age")
 
 		analyzer = HeartRateAnalyzer()
-		max_hr = {"max_hr": analyzer.maxHR(age)}
+		max_hr = {"max_hr": analyzer.maxHR(age), "target_hr": analyzer.targetHRZone(age)}
 		return HttpResponse(json.dumps(max_hr), content_type='application/json')
 
 class httpResponse(APIView):
