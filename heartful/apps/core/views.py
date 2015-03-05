@@ -10,6 +10,32 @@ from .serializers import *
 
 from .heartRateAnalyzer import *
 
+class UserDataSet(APIView):
+	def post(self, request, format=None):
+		googleid = request.data["googleid"]
+		user = User.objects.filter(googleid=googleid)[0]
+		type = request.data["type"]
+
+		userdataset = "nothing"
+
+
+		userdatasetserializer = UserDataSetSerializer(data={"user":user, "type": type})
+		if userdatasetserializer.is_valid(raise_exception=True):
+			print("userdatasetserializer is valid")
+			userdataset = userdatasetserializer.save()
+		else:
+			print("userdatasetserializer not valid")
+
+
+		heartrate_json = request.data["heartrate_values"]
+		serializer = DataEntrySerializer(userdataset = userdataset, data=heartrate_json, many=True)
+		if serializer.is_valid(raise_exception=True):
+			print("serializer is valid")
+			serializer.save()
+			return HttpResponse(json.dumps({"dataset": "success"}), content_type='application/json', status=status.HTTP_200_OK)
+
+		return HttpResponse(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
 class DataTypes(APIView):
 	def get(self, request, format=None):
 		dataTypes = DataType.objects.all()
