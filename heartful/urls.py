@@ -17,5 +17,6 @@ urlpatterns += [
 	url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 	url(r'^user/$', UserTest.as_view(), name='userTest'),
 	url(r'^analysis/$', HeartRateInfo.as_view(), name='heartRate'),
-	url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+	url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+	url(r'^dataset/$', UserDataSetView.as_view(), name='dataSet')
 ]

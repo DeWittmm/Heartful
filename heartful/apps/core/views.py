@@ -2,11 +2,37 @@ from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import json
-
+from .models import UserDataSet, DataEntry, User
 from django.http import Http404, HttpResponseBadRequest, HttpResponse
 
 from .serializers import *
 from .heartRateAnalyzer import *
+
+class UserDataSetView(APIView):
+	def post(self, request, format=None):
+		googleid = request.data["googleid"]
+		user = User.objects.get(googleid=googleid) #.get, try/catch
+		print(str(user.name) + " " + str(user.id))
+		type = request.data["type"]
+
+		userdataset = UserDataSet.objects.create(user = user, type = type)
+
+		userdatasetserializer = UserDataSetSerializer(data={"user":user, "type": type})
+		if userdatasetserializer.is_valid(raise_exception=True):
+			print("userdatasetserializer is valid")
+			userdataset = userdatasetserializer.save()
+		else:
+			print("userdatasetserializer not valid")
+
+
+		heartrate_json = request.data["heartrate_values"]
+		serializer = DataEntrySerializer(userdataset = userdataset, data=heartrate_json, many=True)
+		if serializer.is_valid(raise_exception=True):
+			print("serializer is valid")
+			serializer.save()
+			return HttpResponse(json.dumps({"dataset": "success"}), content_type='application/json', status=status.HTTP_200_OK)
+
+		return HttpResponse(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
 class DataTypes(APIView):
 	def get(self, request, format=None):
