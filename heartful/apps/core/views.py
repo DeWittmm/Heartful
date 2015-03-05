@@ -3,21 +3,21 @@ from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import json
-
+from .models import UserDataSet, DataEntry, User
 from django.http import Http404, HttpResponseBadRequest, HttpResponse
 
 from .serializers import *
 
 from .heartRateAnalyzer import *
 
-class UserDataSet(APIView):
+class UserDataSetView(APIView):
 	def post(self, request, format=None):
 		googleid = request.data["googleid"]
-		user = User.objects.filter(googleid=googleid)[0]
+		user = User.objects.get(googleid=googleid) #.get, try/catch
+		print(str(user.name) + " " + str(user.id))
 		type = request.data["type"]
 
-		userdataset = "nothing"
-
+		userdataset = UserDataSet.objects.create(user = user, type = type)
 
 		userdatasetserializer = UserDataSetSerializer(data={"user":user, "type": type})
 		if userdatasetserializer.is_valid(raise_exception=True):
