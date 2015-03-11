@@ -1,5 +1,3 @@
-
-
 class HeartRateAnalyzer():
 	def maxHR(self, age):
 		if age < 20:
@@ -15,7 +13,7 @@ class HeartRateAnalyzer():
 		else:
 			return 170
 
-	#Returns (50%, 85%)
+	#Returns tuple (50%, 85%)
 	def targetHRZone(self, age):
 		if age < 20:
 			return (100, 170,)

@@ -10,6 +10,7 @@ from .heartRateAnalyzer import *
 from django.template import loader
 from django.template.context import Context
 
+#MARK: User
 class UserTest(APIView):
     
     def get(self, request, format=None):
@@ -34,7 +35,7 @@ class UserDataSetDetailView(APIView):
         raise Http404
     
     def get(self, request, pk, format=None):
-      #TODO: returns first data, should filter by type
+      #TODO: returns first data, should filter by "type"
       userDataSet = self.get_UserDataSets(pk).first()
       enteries = DataEntry.objects.filter(userdataset=userDataSet.id)
       serializer = DataEntrySerializer(enteries, many=True)
@@ -51,8 +52,8 @@ class UserDataSetView(APIView):
           raise Http404
 
     def get(self, request, format=None):
-        sets = DataEntry.objects.all()
-        serializer = DataEntrySerializer(sets, many=True)
+        sets = UserDataSet.objects.all()
+        serializer = UserDataSetSerializer(sets, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
@@ -60,9 +61,8 @@ class UserDataSetView(APIView):
         user = self.get_User(googleid)
         print(str(user.name) + " " + str(user.id))
         activity_type = request.data["type"]
-
-#         userdataset = UserDataSet.objects.create(user=user, type=activity_type)
-
+        
+        #TODO: Should not be creating a new UserDataSet here.
         userdatasetserializer = UserDataSetSerializer(data={"user": user.id, "type": activity_type})
         if userdatasetserializer.is_valid(raise_exception=True):
             userdataset = userdatasetserializer.save()
@@ -85,6 +85,7 @@ class UserDataSetView(APIView):
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
 
+#MARK: Info
 class DataTypes(APIView):
 
     def get(self, request, format=None):
@@ -116,7 +117,7 @@ class httpResponse(APIView):
         to_json = {"Test": 1}
         return HttpResponse(json.dumps(to_json), content_type='application/json')
 
-
+#MARK: Index
 class IndexView(APIView):
     def get(self, request, format=None):
         template = loader.get_template("core/index.html")

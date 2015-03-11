@@ -1,6 +1,6 @@
 # Heartful
 
-A RESTful API/ Django Web App for CPE 409 - Cloud Computing 
+A *RESTful* API/ Django Web App for CPE 409 - Cloud Computing 
 
 ### Main Heartful landing page
 [index/] (http://52.10.162.213)  
