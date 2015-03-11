@@ -13,6 +13,11 @@ from django.template.context import Context
 
 class UserDataSetView(APIView):
 
+    def get(self, request, format=None):
+        sets = DataEntry.objects.all()
+        serializer = DataEntrySerializer(sets, many=True)
+        return Response(serializer.data)
+
     def post(self, request, format=None):
         googleid = request.data["googleid"]
         user = User.objects.get(googleid=googleid)  # .get, try/catch
@@ -23,7 +28,6 @@ class UserDataSetView(APIView):
 
         userdatasetserializer = UserDataSetSerializer(data={"user": user.id, "type": activity_type})
         if userdatasetserializer.is_valid(raise_exception=True):
-            print("userdatasetserializer is valid")
             userdataset = userdatasetserializer.save()
         else:
             userdataset = None
@@ -31,11 +35,12 @@ class UserDataSetView(APIView):
 
         if userdataset:
             heartrate_json = request.data["heartrate_values"]
-            multi_data = [{"userdataset": userdataset.id, "value": heartratedata["value"]} for heartratedata in heartrate_json]
+            print(heartrate_json)
+            # multi_data = [{"userdataset": userdataset.id, "value": heartratedata["value"]} for heartratedata in heartrate_json]
+            multi_data = [{"userdataset": userdataset.id, "value": heartratedata} for heartratedata in heartrate_json]
             serializer = DataEntrySerializer(data=multi_data, many=True)
 
             if serializer.is_valid(raise_exception=True):
-                print("serializer is valid")
                 serializer.save()
                 return HttpResponse(json.dumps({"dataset": "success"}), content_type='application/json', status=status.HTTP_200_OK)
 
@@ -96,6 +101,3 @@ class IndexView(APIView):
         template = loader.get_template("core/index.html")
         c = Context()
         return HttpResponse(template.render(c))
-
-    # form_class = UserRegistrationForm
-    # success_url = reverse_lazy("organizations")
