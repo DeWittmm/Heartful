@@ -2,16 +2,16 @@
 
 A RESTful API/ Django Web App for CPE 409 - Cloud Computing 
 
-## Main Heartful landing page
-- GET
+### Main Heartful landing page
+- GET\s
 [index] (http://52.10.162.213)
 
 
-## All User uploaded data
-*GET* 
-- dataSet/# - retrive specific dataSet
-*POST*
-{"googleid":"", "type":"", "heartrate_values":[Int]} \n
+### All User uploaded data
+- GET\s
+dataSet/# - retrive specific dataSet
+- POST\s
+{"googleid":"", "type":"", "heartrate_values":[Int]} \s
 [dataSet] (http://52.10.162.213/dataSet)
 
 
