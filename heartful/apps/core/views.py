@@ -1,7 +1,7 @@
+import json
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
-import json
 from .models import UserDataSet, DataEntry, User
 from django.http import Http404, HttpResponseBadRequest, HttpResponse
 
@@ -10,8 +10,45 @@ from .heartRateAnalyzer import *
 from django.template import loader
 from django.template.context import Context
 
+class UserTest(APIView):
+    
+    def get(self, request, format=None):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request, format=None):
+        serializer = UserSerializer(data=request.DATA)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(json.dumps({"user": "2"}), content_type='application/json')
+
+class UserDataSetDetailView(APIView):
+    def get_UserDataSets(self, pk):
+      try:
+        objs = UserDataSet.objects.filter(pk=pk)
+        return objs
+      except User.DoesNotExist:
+        raise Http404
+    
+    def get(self, request, pk, format=None):
+      #TODO: returns first data, should filter by type
+      userDataSet = self.get_UserDataSets(pk).first()
+      enteries = DataEntry.objects.filter(userdataset=userDataSet.id)
+      serializer = DataEntrySerializer(enteries, many=True)
+
+      return Response(serializer.data)
+
 
 class UserDataSetView(APIView):
+    def get_User(self, pk):
+       try:
+          obj = User.objects.get(googleid=pk)
+          return obj
+       except User.DoesNotExist:
+          raise Http404
 
     def get(self, request, format=None):
         sets = DataEntry.objects.all()
@@ -20,7 +57,7 @@ class UserDataSetView(APIView):
 
     def post(self, request, format=None):
         googleid = request.data["googleid"]
-        user = User.objects.get(googleid=googleid)  # .get, try/catch
+        user = self.get_User(googleid)
         print(str(user.name) + " " + str(user.id))
         activity_type = request.data["type"]
 
@@ -42,7 +79,8 @@ class UserDataSetView(APIView):
 
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
-                return HttpResponse(json.dumps({"dataset": "success"}), content_type='application/json', status=status.HTTP_200_OK)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+                # return HttpResponse(json.dumps({"dataset": userdataset.id}), content_type='application/json', status=status.HTTP_200_OK)
 
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
@@ -60,23 +98,6 @@ class DataTypes(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class UserTest(APIView):
-
-    def get(self, request, format=None):
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        serializer = UserSerializer(data=request.DATA)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return HttpResponse(json.dumps({"user": "2"}), content_type='application/json')
-
 
 class HeartRateInfo(APIView):
     def get(self, request, format=None):

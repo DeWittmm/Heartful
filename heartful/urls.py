@@ -24,5 +24,6 @@ urlpatterns += [
 urlpatterns += [
 	url(r'^user/$', UserTest.as_view(), name='userTest'),
 	url(r'^analysis/$', HeartRateInfo.as_view(), name='heartRate'),
-	url(r'^dataSet/$', UserDataSetView.as_view(), name='dataSet')
+	url(r'^dataSet/$', UserDataSetView.as_view(), name='dataSet'),
+	url(r'^dataSet/(?P<pk>[0-9]+)/$', UserDataSetDetailView.as_view())
 ]

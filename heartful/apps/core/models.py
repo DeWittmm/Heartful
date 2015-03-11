@@ -1,7 +1,8 @@
 from django.db import models
 
 class User(models.Model):
-   googleid = models.CharField(max_length=100, unique=True)
+#   googleid = models.CharField(max_length=100, primary_key=True)
+   googleid = models.CharField(max_length=100)
    name = models.CharField(max_length=100)
    heartrate = models.IntegerField(default=0)
    spO2 = models.IntegerField(default=0)
