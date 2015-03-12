@@ -26,22 +26,30 @@ class UserTest(APIView):
         else:
             return HttpResponse(json.dumps({"user": "2"}), content_type='application/json')
 
-class UserDataSetDetailView(APIView):
+class UserEntriesView(APIView):
+
+   def get(self, request, format=None):
+       enteries = DataEntry.objects.all()
+       serializer = DataEntrySerializer(enteries, many=True)
+
+       return Response(serializer.data)
+
+class UserEntriesDetailView(APIView):
+
     def get_UserDataSets(self, pk):
-      try:
-        objs = UserDataSet.objects.filter(pk=pk)
-        return objs
-      except User.DoesNotExist:
-        raise Http404
-    
+       try:
+          objs = UserDataSet.objects.get(pk=pk)
+          return objs
+       except User.DoesNotExist:
+          raise Http404
+
     def get(self, request, pk, format=None):
-      #TODO: returns first data, should filter by "type"
-      userDataSet = self.get_UserDataSets(pk).first()
-      enteries = DataEntry.objects.filter(userdataset=userDataSet.id)
-      serializer = DataEntrySerializer(enteries, many=True)
-
-      return Response(serializer.data)
-
+        #TODO: returns first data, should filter by "type"
+        userDataSet = self.get_UserDataSets(pk)
+        enteries = DataEntry.objects.filter(userdataset=userDataSet.id)
+        serializer = DataEntrySerializer(enteries, many=True)
+            
+        return Response(serializer.data)
 
 class UserDataSetView(APIView):
     def get_User(self, pk):
@@ -62,7 +70,6 @@ class UserDataSetView(APIView):
         print(str(user.name) + " " + str(user.id))
         activity_type = request.data["type"]
         
-        #TODO: Should not be creating a new UserDataSet here.
         userdatasetserializer = UserDataSetSerializer(data={"user": user.id, "type": activity_type})
         if userdatasetserializer.is_valid(raise_exception=True):
             userdataset = userdatasetserializer.save()
@@ -73,8 +80,10 @@ class UserDataSetView(APIView):
         if userdataset:
             heartrate_json = request.data["heartrate_values"]
             print(heartrate_json)
+            print(userdataset.id)
             # multi_data = [{"userdataset": userdataset.id, "value": heartratedata["value"]} for heartratedata in heartrate_json]
-            multi_data = [{"userdataset": userdataset.id, "value": heartratedata} for heartratedata in heartrate_json]
+            multi_data = [{"userdataset": userdataset.id, "value": heartratedata["value"], "unit": heartratedata["unit"], "date_time": heartratedata["date_time"]}
+                          for heartratedata in heartrate_json]
             serializer = DataEntrySerializer(data=multi_data, many=True)
 
             if serializer.is_valid(raise_exception=True):

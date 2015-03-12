@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 class User(models.Model):
@@ -9,16 +10,18 @@ class User(models.Model):
    spO2 = models.IntegerField(default=0)
    age = models.IntegerField(default=0)
 
+class UserDataSet(models.Model):
+    user = models.ForeignKey(User, unique=False)
+    type = models.CharField(max_length=200)
+
 class DataType(models.Model):
   type = models.CharField(max_length=200)
-
-class UserDataSet(models.Model):
-  user = models.ForeignKey(User, unique=False)
-  type = models.CharField(max_length=100)
 
 class DataEntry(models.Model):
   userdataset = models.ForeignKey(UserDataSet)
   value = models.FloatField(default=0.0)
+  unit = models.CharField(max_length=10, default="bpm")
+  date_time = models.DateTimeField(default=datetime.date.today())
 
 class MedicalDataSet(models.Model):
    title = models.CharField(max_length = 1000)

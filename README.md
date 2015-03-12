@@ -6,16 +6,37 @@ A *RESTful* API/ Django Web App for CPE 409 - Cloud Computing
 [index/] (http://52.10.162.213)  
 - GET  
 
+### User
+[user/] (http://127.0.0.1:8000/user/)  
+- GET  
+- POST  
+{"googleid": "100",  
+ "name":"NONE",  
+ "heartrate": 65,  
+ "spO2": 99,  
+ "age": 23
+}
 
-### All User uploaded data
+### User uploaded data
 [dataSet/] (http://52.10.162.213/dataSet)  
 - GET  
 dataSet/# - retrive specific dataSet
 - POST  
-{"googleid":"", "type":"", "heartrate_values":[Int]}  
+{"googleid":"100",     
+ "type":"sitting",     
+ "heartrate_values":[{"value":64,     
+                      "unit":"bpm",    
+                      "date_time":"2009-07-24 21:45:34-07"}]  
+} 
 
+#### All user entries
+[dataSet/] (http://127.0.0.1:8000/dataSet/entries/)    
+- GET   
+[dataSet/#] Specific user entries
 
+### Data Types
 [dataTypes/] (http://52.10.162.213/dataTypes)
+- GET  
 
 [analysis/#] (http://52.10.162.213/analysis?age=23)
 

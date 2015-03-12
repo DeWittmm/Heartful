@@ -23,7 +23,12 @@ urlpatterns += [
 #Core
 urlpatterns += [
 	url(r'^user/$', UserTest.as_view(), name='userTest'),
-	url(r'^analysis/$', HeartRateInfo.as_view(), name='heartRate'),
-	url(r'^dataSet/$', UserDataSetView.as_view(), name='dataSet'),
-	url(r'^dataSet/(?P<pk>[0-9]+)/$', UserDataSetDetailView.as_view())
+	url(r'^analysis/$', HeartRateInfo.as_view(), name='heartRate')
+	
+]
+
+urlpatterns += [
+    url(r'^dataSet/$', UserDataSetView.as_view(), name='dataSet'),
+    url(r'^dataSet/entries/$', UserEntriesView.as_view()),
+    url(r'^dataSet/entries/(?P<pk>[0-9]+)/$', UserEntriesDetailView.as_view())
 ]

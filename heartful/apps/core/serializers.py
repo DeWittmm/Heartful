@@ -2,12 +2,6 @@ from rest_framework import serializers
 from .models import *
 
 
-class DataTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DataType
-        fields = ('type',)
-
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -19,10 +13,16 @@ class UserDataSetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserDataSet
-        fields = ('user', 'type',)
+        fields = ('id', 'user', 'type',)
 
 
 class DataEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = DataEntry
-        fields = ('userdataset', 'value',)
+        fields = ('userdataset', 'value', 'unit', 'date_time',)
+
+
+class DataTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DataType
+        fields = ('type',)
