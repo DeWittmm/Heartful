@@ -36,28 +36,14 @@ class UserEntriesView(APIView):
 
 class UserEntriesDetailView(APIView):
 
-    def get_UserDataSets(self, pk):
-       try:
-          objs = UserDataSet.objects.get(pk=pk)
-          return objs
-       except User.DoesNotExist:
-          raise Http404
-
     def get(self, request, pk, format=None):
-        #TODO: returns first data, should filter by "type"
-        userDataSet = self.get_UserDataSets(pk)
+        userDataSet = get_UserDataSets(pk)
         enteries = DataEntry.objects.filter(userdataset=userDataSet.id)
         serializer = DataEntrySerializer(enteries, many=True)
             
         return Response(serializer.data)
 
 class UserDataSetView(APIView):
-    def get_User(self, pk):
-       try:
-          obj = User.objects.get(googleid=pk)
-          return obj
-       except User.DoesNotExist:
-          raise Http404
 
     def get(self, request, format=None):
         sets = UserDataSet.objects.all()
@@ -66,7 +52,7 @@ class UserDataSetView(APIView):
 
     def post(self, request, format=None):
         googleid = request.data["googleid"]
-        user = self.get_User(googleid)
+        user = get_User(googleid)
         print(str(user.name) + " " + str(user.id))
         activity_type = request.data["type"]
         
@@ -79,11 +65,13 @@ class UserDataSetView(APIView):
 
         if userdataset:
             heartrate_json = request.data["heartrate_values"]
-            print(heartrate_json)
-            print(userdataset.id)
-            # multi_data = [{"userdataset": userdataset.id, "value": heartratedata["value"]} for heartratedata in heartrate_json]
-            multi_data = [{"userdataset": userdataset.id, "value": heartratedata["value"], "unit": heartratedata["unit"], "date_time": heartratedata["date_time"]}
-                          for heartratedata in heartrate_json]
+            dict = {"userdataset": userdataset.id}
+            
+            multi_data = []
+            for heartratedata in heartrate_json:
+               dict.update(heartratedata)
+               multi_data += [dict]
+
             serializer = DataEntrySerializer(data=multi_data, many=True)
 
             if serializer.is_valid(raise_exception=True):
@@ -93,6 +81,32 @@ class UserDataSetView(APIView):
 
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
+#MARK: Goals
+class Goals(APIView):
+   def get(self, request, format=None):
+      goals = Goal.objects.all()
+      serializer = GoalSerializer(goals, many=True)
+
+      return Response(serializer.data)
+
+   def post(self, request, format=None):
+      googleid = request.data["googleId"]
+      user = get_User(googleid)
+      request.data["user"] = user.id
+
+      serializer = GoalSerializer(data=request.data)
+      if serializer.is_valid(raise_exception=True):
+         serializer.save()
+         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class GoalsDetails(APIView):
+   def get(self, request, pk, format=None):
+      user = get_User(pk)
+      
+      userGoals = Goal.objects.filter(user=user.id)
+      serializer = GoalSerializer(userGoals, many=True)
+      
+      return Response(serializer.data)
 
 #MARK: Info
 class DataTypes(APIView):
@@ -132,3 +146,18 @@ class IndexView(APIView):
         template = loader.get_template("core/index.html")
         c = Context()
         return HttpResponse(template.render(c))
+
+#MARK: Convience Methods
+def get_User(pk):
+   try:
+      obj = User.objects.get(googleid=pk)
+      return obj
+   except User.DoesNotExist:
+      raise Http404
+
+def get_UserDataSets(pk):
+   try:
+      objs = UserDataSet.objects.get(pk=pk)
+      return objs
+   except UserDataSet.DoesNotExist:
+      raise Http404

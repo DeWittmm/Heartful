@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import *
 
-
+#MARK: User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -26,3 +26,9 @@ class DataTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = DataType
         fields = ('type',)
+
+#MARK: Goals
+class GoalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Goal
+        fields = ('user', 'title', 'detail', 'status', 'importance',)

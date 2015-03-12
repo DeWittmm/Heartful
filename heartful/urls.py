@@ -23,6 +23,8 @@ urlpatterns += [
 #Core
 urlpatterns += [
 	url(r'^user/$', UserTest.as_view(), name='userTest'),
+    url(r'^fitness/$', Goals.as_view(), name='goals'),
+    url(r'^fitness/(?P<pk>[0-9]+)/$', GoalsDetails.as_view(), name='goalDetails'),
 	url(r'^analysis/$', HeartRateInfo.as_view(), name='heartRate')
 	
 ]

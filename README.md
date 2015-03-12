@@ -19,6 +19,7 @@ A *RESTful* API/ Django Web App for CPE 409 - Cloud Computing
 
 ### User uploaded data
 [dataSet/] (http://52.10.162.213/dataSet)  
+
 - GET  
 dataSet/# - retrive specific dataSet
 - POST  
@@ -31,13 +32,40 @@ dataSet/# - retrive specific dataSet
 
 #### All user entries
 [dataSet/] (http://127.0.0.1:8000/dataSet/entries/)    
+
 - GET   
 [dataSet/#] Specific user entries
 
 ### Data Types
 [dataTypes/] (http://52.10.162.213/dataTypes)
-- GET  
 
+- GET 
+
+### Fitness
+[fitness/] (http://127.0.0.1:8000/fitness/)
+
+- GET  
+[fitness/#] Specific user goals  
+
+{"googleId": "100",  
+ "goals": [{"id": 1,   
+            "title": "Goal!",   
+            "detail": "Really want this one",  
+            "status": "In progress",   
+            "importance": 10   
+          }]  
+}  
+
+- POST  
+{"googleId": "100",
+ "title": "New Goal", 
+ "detail": "Really want this one",  
+ "status": "In progress",   
+ "importance": 10   
+}
+
+
+### Analysis
 [analysis/#] (http://52.10.162.213/analysis?age=23)
 
 # Notes

@@ -1,6 +1,7 @@
 import datetime
 from django.db import models
 
+#MARK: User
 class User(models.Model):
     #TODO?: Migrate DB to use googleid as pk
 #   googleid = models.CharField(max_length=100, primary_key=True)
@@ -23,6 +24,15 @@ class DataEntry(models.Model):
   unit = models.CharField(max_length=10, default="bpm")
   date_time = models.DateTimeField(default=datetime.date.today())
 
+#MARK: Goals
+class Goal(models.Model):
+    user = models.ForeignKey(User, unique=False)
+    title = models.CharField(max_length=100)
+    detail = models.CharField(max_length=200)
+    status = models.CharField(max_length=100)
+    importance = models.IntegerField(default=0)
+
+#MARK: Medical
 class MedicalDataSet(models.Model):
    title = models.CharField(max_length = 1000)
    research_conclusion = models.CharField(max_length=1000)
@@ -33,3 +43,4 @@ class StatEntry(models.Model):
    medicaldataset = models.ForeignKey(MedicalDataSet)
    type = models.CharField(max_length=100)
    value = models.IntegerField(default=0)
+
