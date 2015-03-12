@@ -21,7 +21,8 @@ A *RESTful* API/ Django Web App for CPE 409 - Cloud Computing
 [dataSet/] (http://52.10.162.213/dataSet)  
 
 - GET  
-dataSet/# - retrive specific dataSet
+Returns all dataSets  
+
 - POST  
 {"googleid":"100",     
  "type":"sitting",     
@@ -30,11 +31,9 @@ dataSet/# - retrive specific dataSet
                       "date_time":"2009-07-24 21:45:34-07"}]  
 } 
 
-#### All user entries
-[dataSet/] (http://127.0.0.1:8000/dataSet/entries/)    
-
-- GET   
-[dataSet/#] Specific user entries
+All user entries
+[dataSet/entries] (http://127.0.0.1:8000/dataSet/entries/)    
+[dataSet/entries/#] Specific user entries
 
 ### Data Types
 [dataTypes/] (http://52.10.162.213/dataTypes)
