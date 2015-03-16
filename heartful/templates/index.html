@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 {% load staticfiles %} 
 <html lang="en">
@@ -20,11 +19,14 @@
     <!-- AJAX 2.X, bootstrap (ajax dependent), our script (ajax and bootstrap dependent) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/script.js' %}"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script src="https://apis.google.com/js/client:platform.js" async defer></script>
+    <!-- http://masonry.desandro.com/ -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/masonry/3.2.2/masonry.pkgd.min.js"></script> 
+    <script src="{% static 'js/script.js' %}"></script>
 
     <!-- Local testing paths -->
-    <!-- <script src="../static/js/script.js"></script> -->
+    <!-- // <script src="../static/js/script.js"></script> -->
     <!-- <link rel="stylesheet" type="text/css" href="../static/css/index.css"> -->
   </head>
 
@@ -48,8 +50,6 @@
         <div id="navbar" class="navbar-collapse collapse">
           <div id="userName"></div>
           <form class="navbar-form navbar-right">
-            <!--<button type="submit" class="btn btn-success" data-toggle="modal" onclick="signIn()" data-target="#signInModal">Sign in</button>
-            <button type="submit" class="btn btn-info" data-toggle="modal" onclick="createUser()" data-target="#newUserModal">Create User</button> -->
             <span id="googleSigninButton" class="btn">
               <span
                 class="g-signin"
@@ -74,6 +74,10 @@
     </div>
 
     <div id="pageContent" class="container">
+      
+      <!-- Example for the chart stuff...uncomment to see the pizza pie chart -->
+      <!-- <div id="chart_div" style="width:400; height:300"></div> -->
+      
       <div id="tileContent">
         <!-- first row of 'tiles' -->
         <div class="row">
@@ -153,7 +157,7 @@
     </div>
 
     <!-- newUserModal -->
-    <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -189,7 +193,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- manualDataEntryModal -->
     <div class="modal fade customModal" id="manualDataEntryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -204,17 +208,21 @@
             <form class="form">
               <div class="form-group">
                 <p>Heart rate</p>
-                <input type="text" placeholder="(bpm)" class="form-control">
+                <input id="manualEntryHR" type="text" placeholder="(bpm)" class="form-control">
               </div>
               <div class="form-group">
-                <p>Blood Oxygenation</p>
-                <input type="text" placeholder="(% O2)" class="form-control">
+                <p>Date</p>
+                <input id="manualEntryDate" type="text" value="2009-07-24 21:45:34-07" class="form-control">
+              </div>
+              <div class="form-group">
+                <p>Activity Type</p>
+                <input id="manualEntryType" type="text" value="sitting" class="form-control">
               </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-primary" onclick="submitManualData()">Submit</button>
           </div>
         </div>
       </div>
