@@ -7,7 +7,7 @@ A *RESTful* API/ Django Web App for CPE 409 - Cloud Computing
 - GET  
 
 ### User
-[user/] (http://127.0.0.1:8000/user/)  
+[user/] (http://52.10.162.213/user/)  
 - GET  
 - POST  
 {"googleid": "100",  
@@ -32,16 +32,16 @@ Returns all dataSets
 } 
 
 All user entries
-[dataSet/entries] (http://127.0.0.1:8000/dataSet/entries/)    
+- GET
+[dataSet/entries] (http://52.10.162.213/dataSet/entries/)    
 [dataSet/entries/#] Specific user entries
 
 ### Data Types
 [dataTypes/] (http://52.10.162.213/dataTypes)
 
-- GET 
 
 ### Fitness
-[fitness/] (http://127.0.0.1:8000/fitness/)
+[fitness/] (http://52.10.162.213/fitness/)
 
 - GET  
 [fitness/#] Specific user goals  

@@ -66,7 +66,7 @@ class UserDataSetView(APIView):
         if userdataset:
             heartrate_json = request.data["heartrate_values"]
             dict = {"userdataset": userdataset.id}
-            
+                        
             multi_data = []
             for heartratedata in heartrate_json:
                dict.update(heartratedata)
