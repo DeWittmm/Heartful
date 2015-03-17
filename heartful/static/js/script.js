@@ -322,7 +322,7 @@ function signinCallback(authResult) {
 
         //hide sign in button and show name instead
         $("#googleSignInButton").css("display", "none");
-        $("#userName").append("<p style='color : white'>" + userName + "</p>");
+        $("#userName").append("<p style='color : white; margin-left : 70%'>Welcome " + userName + "</p>");
 
         if (googleid != null) {
           var aUrl = baseUrl + "user/"
