@@ -19,12 +19,17 @@ class UserTest(APIView):
         return Response(serializer.data)
     
     def post(self, request, format=None):
-        serializer = UserSerializer(data=request.DATA)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return HttpResponse(json.dumps({"user": "2"}), content_type='application/json')
+#        print(request.data["googleid"])
+        gid = request.data["googleid"]
+
+        if User.objects.filter(googleid=gid) != None:
+            serializer = UserSerializer(data=request.DATA)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_200_OK)
+
 
 class UserEntriesView(APIView):
 

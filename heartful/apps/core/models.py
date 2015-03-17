@@ -3,7 +3,7 @@ from django.db import models
 
 #MARK: User
 class User(models.Model):
-    #TODO?: Migrate DB to use googleid as pk
+    # TODO?: Migrate DB to use googleid as pk
 #   googleid = models.CharField(max_length=100, primary_key=True)
    googleid = models.CharField(max_length=100)
    name = models.CharField(max_length=100)
