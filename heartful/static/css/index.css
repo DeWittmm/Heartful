@@ -72,11 +72,12 @@ body {
 
 .masonryPadding {
 	padding-left: 10px;
+	padding-top: 10px;
 }
 
 .masonry .item {
   width:  100px;
-  height: 100px;
+  height: 150px;
   float: left;
   background: #eeeeee;
   border: 2px solid #333;
@@ -88,6 +89,12 @@ body {
 .item.w3 { width:  360px; }
 .item.w4 { width:  480px; }
 
-.item.h2 { height: 180px; }
-.item.h3 { height: 210px; }
+.item.h2 { height: 200px; }
+.item.h3 { height: 220px; }
 .item.h4 { height: 240px; }
+
+.item:hover {
+  background: #5bc0de;
+  border-color: white;
+  cursor: pointer;
+}
