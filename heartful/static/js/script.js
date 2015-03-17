@@ -1,6 +1,6 @@
 var remoteUrl = "http://52.10.162.213/";
 var localUrl = "http://127.0.0.1:8000/";
-var baseUrl = localUrl;
+var baseUrl = remoteUrl;
 var user = { userName : "", userId : "", age : "" };
 
 var myHRData;
