@@ -1,7 +1,7 @@
 var remoteUrl = "http://52.10.162.213/";
 var localUrl = "http://127.0.0.1:8000/";
-var baseUrl = localUrl;
-var googleid = "103153840979410773644";
+var baseUrl = remoteUrl;
+var googleid;
 
 var myHRData;
 
@@ -188,8 +188,8 @@ function showIntensityTile() {
   var highTargetHR = 175;
   var maxHR = 200;
 
-  var targetHRRangeUrl = baseUrl + "targetHR";
-  var targetAge = { targetAge : user.age };
+  var targetHRRangeUrl = baseUrl + "analysis/";
+  var targetAge = { age : 22 };
 
   $.ajax({
     type: "GET",
@@ -217,10 +217,10 @@ function showIntensityTile() {
 
   $("#tileDetail").empty().append(toAppend);
 
-  showExerciseIntensityTable();
+  showExerciseIntensityTable(lowTargetHR, highTargetHR);
 }
 
-function showExerciseIntensityTable() {
+function showExerciseIntensityTable(lowTargetHR, highTargetHR) {
   //create table
 
   var toAppend = "<div class='table-responsive'>";
@@ -228,9 +228,11 @@ function showExerciseIntensityTable() {
   toAppend += '<thead style="display: table-header-group;"><tr><th>Intensity</th><th>Heart Rate Range</th></tr></thead>';
   toAppend += '<tbody>';
 
-  for (i = 0; i < 5; i++) {
-    toAppend += '<tr><td>' + i + '</td><td>' + i + '</td></tr>'
-  }
+  toAppend += '<tr><td>Gentle Walking</td><td>' + lowTargetHR + '</td></tr>'
+  toAppend += '<tr><td>Low Intensity Exercise</td><td>' + (lowTargetHR + 30) + '</td></tr>'
+  toAppend += '<tr><td>Moderate Intensity Exercise</td><td>' + (highTargetHR - 30) + '</td></tr>'
+  toAppend += '<tr><td>High Intensity Exercise</td><td>' + (highTargetHR + 10) + '</td></tr>'
+
 
   toAppend += "</tbody></table></div>";
   $("#exerciseIntensityRangeTbl").empty().append(toAppend);
@@ -326,6 +328,10 @@ function signinCallback(authResult) {
   } else {
       console.log('Sign-in state: ' + authResult['error']);
   }
+
+  if (googleid == null) {
+    createUser();
+  }
 }
 
 function dateCleaner(date) {
@@ -333,6 +339,10 @@ function dateCleaner(date) {
   return "" + (cleanDate.getMonth() + 1) + "/" + cleanDate.getDate() + "/" + cleanDate.getFullYear();
 }
 
+function submitNewUser() {
+  //post the user stuff, then do the google auth to get the google id
+
+}
 
 function getItemElement(goal) {
   var elem = document.createElement('div');
