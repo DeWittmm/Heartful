@@ -50,7 +50,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <div id="userName"></div>
           <form class="navbar-form navbar-right">
-            <span id="googleSigninButton" class="btn">
+            <span id="googleSignInButton" class="btn">
               <span
                 class="g-signin"
                 data-callback="signinCallback"
@@ -112,7 +112,8 @@
       </div>  
 
       <!-- TILE DETAIL AREA -->
-      <div id="tileDetail"></div>
+      <div id="tileDetail">
+      </div>
     </div>  
 
 
@@ -223,6 +224,39 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-primary" onclick="submitManualData()">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- newFitnessGoalModal -->
+    <div class="modal fade customModal" id="newFitnessGoalModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Enter A New Fitness Goal</h4>
+          </div>
+          <div class="modal-body">
+            <p> </p>     
+            <form class="form">
+              <div class="form-group">
+                <p>Goal name</p>
+                <input id="goalName" type="text" class="form-control">
+              </div>
+              <div class="form-group">
+                <p>Goal details</p>
+                <input id="goalDetail" type="text" class="form-control">
+              </div>
+              <div class="form-group">
+                <p>Importance</p>
+                <input id="goalImportance" type="text" placeholder="1 - 100" class="form-control">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="submitNewGoal()">Submit</button>
           </div>
         </div>
       </div>

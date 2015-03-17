@@ -138,30 +138,46 @@ function showSleepTile() {
 }
 
 function showFitnessTile() {
-  //var fitnessUrl = baseUrl + "fitness/" + user.userId;
-  var fitnessUrl = baseUrl + "test";
-  var fitnessData = {};
+  var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
+  toAppend += "<br><h1>Fitness Tile Stuff</h1>";
+  toAppend += '<button type="submit" style="margin-left: 70%;" class="btn btn-success" data-toggle="modal" data-target="#newFitnessGoalModal">Enter New Fitness Goal</button>';
+  toAppend += "<div class='masonry' id='fitnessMasonry'></div>";
+
+  $("#tileDetail").empty().append(toAppend);
+
+  var fitnessUrl = baseUrl + "fitness/";
 
   $.ajax({
     type: "GET",
-    url: fitnessUrl,
-    data: fitnessData
+    url: fitnessUrl
   }).done(function(result) {
-    //want to get things like target HR and baseline HR
-
     console.log(result);
-
-
+    createFitnessTiles(result);
   });   
+}
 
-      var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
-    // toAppend += "<br><p>Baseline Heart Rate: " + userFitness.baselineHR + "</p><br><p>Target Heart Rate: " + userFitness.targetHR + "</p>"  
-    toAppend += "<br><h1>Fitness Tile Stuff</h1>";
+function submitNewGoal() {
+  var fitnessUrl = baseUrl + "fitness/";
 
+  var title = $("#goalName").val();
+  var detail = $("#goalDetail").val();
+  var importance = $("#goalImportance").val();
 
-    $("#tileDetail").empty().append(toAppend);
+  var id = 100;
 
-  
+  var fitnessData = { "googleid" : id, "title" : title, "detail" : detail, "status" : "new", "importance" : importance };
+  var json = JSON.stringify(fitnessData);
+
+  $.ajax({
+    type: "POST",
+    url: fitnessUrl,
+    data: json,
+    contentType: "application/json" 
+  }).done(function(result) {
+    console.log("successful submit of new goal");
+    console.log(result);
+  });
+
 }
 
 function showCaloriesTile() {
@@ -224,7 +240,6 @@ function showExerciseIntensityTable() {
 }
 
 function showOtherUsersTile() {
-
   //do a get call to load data about all the users
   var allDataUrl = baseUrl + "dataSet/entries/" 
 
@@ -278,8 +293,9 @@ function submitManualData() {
   var type = $("#manualEntryType").val();
   var id = 28;
 
-  var json = { "googleid" : id, "type" : type, "heartrate_values" : [{ "value" : hr, "unit" : "bpm", "date_time" : date }] };
-  var manualDataUrl = baseUrl + "dataSet";
+  var hrData = { "googleid" : id, "type" : type, "heartrate_values" : [{ "value" : hr, "unit" : "bpm", "date_time" : date }] };
+  var json = JSON.stringify(hrData);
+  var manualDataUrl = baseUrl + "dataSet/";
 
   $.ajax({
     type: "POST",
@@ -295,22 +311,24 @@ function submitManualData() {
   });
 }
 
+
+
 function signinCallback(authResult) {
   if (authResult['status']['signed_in']) {
-      gapi.client.load('plus','v1', function() {
-          var request = gapi.client.plus.people.get({
-             'userId': 'me'
-          });
-          request.execute(function(resp) {
-            user.userName = resp.displayName;
-            user.userId = resp.result.id;
-            console.log(user.userName + " " + user.userId);
-
-            //hide sign in button and show name instead
-            $("#googleSignInButton").css("display", "none");
-            $("#userName").append("<p>" + user.userName + "</p>");
-          });
+    gapi.client.load('plus','v1', function() {
+      var request = gapi.client.plus.people.get({
+         'userId': 'me'
       });
+      request.execute(function(resp) {
+        user.userName = resp.displayName;
+        user.userId = resp.result.id;
+        console.log(user.userName + " " + user.userId);
+
+        //hide sign in button and show name instead
+        $("#googleSignInButton").css("display", "none");
+        $("#userName").append("<p>" + user.userName + "</p>");
+      });
+    });
   } else {
       console.log('Sign-in state: ' + authResult['error']);
   }
@@ -319,4 +337,43 @@ function signinCallback(authResult) {
 function dateCleaner(date) {
   var cleanDate = new Date(date);
   return "" + (cleanDate.getMonth() + 1) + "/" + cleanDate.getDate() + "/" + cleanDate.getFullYear();
+}
+
+
+
+
+
+
+
+
+function getItemElement(goal) {
+  console.log(goal);
+  var elem = document.createElement('div');
+  var importance = 2 * goal["importance"]  + 10;
+  elem.className = 'item';
+  
+  var inner = "<div class='masonryPadding'><p style='font-size : " + importance + "px;'>" + goal["title"] + "</h3><br><p style='font-size : " + importance + "px;'>" + goal["detail"] + "</p></div>"
+
+  elem.innerHTML = inner;
+  return elem;
+}
+
+function createFitnessTiles(data) {
+  var container = document.querySelector('#fitnessMasonry');
+  var msnry = new Masonry( container, {
+    columnWidth: 200
+  });
+
+  for (i = 0; i < data.length; i++) {
+    var elems = [];
+    var fragment = document.createDocumentFragment();
+    for ( var i = 0; i < data.length && data[i]["state"] == "active"; i++ ) {
+      var elem = getItemElement(data[i]);
+      fragment.appendChild( elem );
+      elems.push( elem );
+    }
+
+    container.appendChild( fragment );
+    msnry.appended( elems );
+  }
 }
