@@ -1,7 +1,7 @@
 var remoteUrl = "http://52.10.162.213/";
 var localUrl = "http://127.0.0.1:8000/";
 var baseUrl = remoteUrl;
-var user = { userName : "", userId : "", age : "" };
+var googleid;
 
 var myHRData;
 
@@ -39,10 +39,7 @@ function createUser () {
 }
 
 function showMyDataTile() {
-  //allow for manual entry
-
-  //do a get call to load some amount of the data
-  var myDataUrl = baseUrl + "dataSet/entries/28/" + user.userId;
+  var myDataUrl = baseUrl + "dataSet/entries/id/" + googleid + "/";
 
   $.ajax({
     type: "GET",
@@ -151,7 +148,6 @@ function showFitnessTile() {
     type: "GET",
     url: fitnessUrl
   }).done(function(result) {
-    console.log(result);
     createFitnessTiles(result);
   });   
 }
@@ -163,9 +159,7 @@ function submitNewGoal() {
   var detail = $("#goalDetail").val();
   var importance = $("#goalImportance").val();
 
-  var id = 100;
-
-  var fitnessData = { "googleid" : id, "title" : title, "detail" : detail, "status" : "new", "importance" : importance };
+  var fitnessData = { "googleId" : googleid, "title" : title, "detail" : detail, "status" : "active", "importance" : importance };
   var json = JSON.stringify(fitnessData);
 
   $.ajax({
@@ -175,9 +169,12 @@ function submitNewGoal() {
     contentType: "application/json" 
   }).done(function(result) {
     console.log("successful submit of new goal");
-    console.log(result);
+    $("#goalName").val("");
+    $("#goalDetail").val("");
+    $("#goalImportance").val("");
+    $("#newFitnessGoalModal").toggle();
+    createFitnessTiles(result);
   });
-
 }
 
 function showCaloriesTile() {
@@ -191,8 +188,8 @@ function showIntensityTile() {
   var highTargetHR = 175;
   var maxHR = 200;
 
-  var targetHRRangeUrl = baseUrl + "targetHR";
-  var targetAge = { targetAge : user.age };
+  var targetHRRangeUrl = baseUrl + "analysis/";
+  var targetAge = { age : 22 };
 
   $.ajax({
     type: "GET",
@@ -220,10 +217,10 @@ function showIntensityTile() {
 
   $("#tileDetail").empty().append(toAppend);
 
-  showExerciseIntensityTable();
+  showExerciseIntensityTable(lowTargetHR, highTargetHR);
 }
 
-function showExerciseIntensityTable() {
+function showExerciseIntensityTable(lowTargetHR, highTargetHR) {
   //create table
 
   var toAppend = "<div class='table-responsive'>";
@@ -231,9 +228,11 @@ function showExerciseIntensityTable() {
   toAppend += '<thead style="display: table-header-group;"><tr><th>Intensity</th><th>Heart Rate Range</th></tr></thead>';
   toAppend += '<tbody>';
 
-  for (i = 0; i < 5; i++) {
-    toAppend += '<tr><td>' + i + '</td><td>' + i + '</td></tr>'
-  }
+  toAppend += '<tr><td>Gentle Walking</td><td>' + lowTargetHR + '</td></tr>'
+  toAppend += '<tr><td>Low Intensity Exercise</td><td>' + (lowTargetHR + 30) + '</td></tr>'
+  toAppend += '<tr><td>Moderate Intensity Exercise</td><td>' + (highTargetHR - 30) + '</td></tr>'
+  toAppend += '<tr><td>High Intensity Exercise</td><td>' + (highTargetHR + 10) + '</td></tr>'
+
 
   toAppend += "</tbody></table></div>";
   $("#exerciseIntensityRangeTbl").empty().append(toAppend);
@@ -291,16 +290,16 @@ function submitManualData() {
   var hr = $("#manualEntryHR").val();
   var date = $("#manualEntryDate").val();
   var type = $("#manualEntryType").val();
-  var id = 28;
 
-  var hrData = { "googleid" : id, "type" : type, "heartrate_values" : [{ "value" : hr, "unit" : "bpm", "date_time" : date }] };
+  var hrData = { "googleid" : googleid, "type" : type, "heartrate_values" : [{ "value" : hr, "unit" : "bpm", "date_time" : date }] };
   var json = JSON.stringify(hrData);
   var manualDataUrl = baseUrl + "dataSet/";
 
   $.ajax({
     type: "POST",
     url: manualDataUrl,
-    data: json
+    data: json,
+    contentType: "application/json" 
   }).done(function(result) {
       $("#manualEntryHR").val("");
       $("#manualEntryDate").val("2009-07-24 21:45:34-07");
@@ -311,8 +310,6 @@ function submitManualData() {
   });
 }
 
-
-
 function signinCallback(authResult) {
   if (authResult['status']['signed_in']) {
     gapi.client.load('plus','v1', function() {
@@ -320,13 +317,37 @@ function signinCallback(authResult) {
          'userId': 'me'
       });
       request.execute(function(resp) {
-        user.userName = resp.displayName;
-        user.userId = resp.result.id;
-        console.log(user.userName + " " + user.userId);
+        userName = resp.displayName;
+        googleid = resp.result.id;
 
         //hide sign in button and show name instead
         $("#googleSignInButton").css("display", "none");
-        $("#userName").append("<p>" + user.userName + "</p>");
+        $("#userName").append("<p style='color : white; margin-left : 70%'>Welcome " + userName + "</p>");
+
+        if (googleid != null) {
+          var aUrl = baseUrl + "user/"
+
+          $.ajax({
+            type: "GET",
+            url: aUrl,
+            contentType: "application/json" 
+          }).done(function(result) {
+            var found = false;
+            for (var i = 0; i < result.length; i++) {
+              if (result[i]["googleid"] == googleid) {
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              createUser();
+            }
+
+          }).fail(function(result) {
+            console.log("failed to upload new user")
+          });
+        }
+
       });
     });
   } else {
@@ -339,19 +360,54 @@ function dateCleaner(date) {
   return "" + (cleanDate.getMonth() + 1) + "/" + cleanDate.getDate() + "/" + cleanDate.getFullYear();
 }
 
+function submitNewUser() {
+  //post the user stuff, then do the google auth to get the google id
 
+  var name = $("#nameEntry").val();
+  var hr = $("#hrEntry").val();
+  var o2 = $("#o2Entry").val();
+  var age = $("#ageEntry").val(); 
 
+  var userData = { "googleid" : googleid, "name" : name, "heartrate" : hr, "spO2" : o2, "age" : age };
+  var json = JSON.stringify(userData);
+  var newUserUrl = baseUrl + "user/";
 
+  $.ajax({
+    type: "POST",
+    url: newUserUrl,
+    data: json,
+    contentType: "application/json" 
+  }).done(function(result) {
+    $("#nameEntry").val("");
+    $("#hrEntry").val("");
+    $("#o2Entry").val("");
+    $("#ageEntry").val(""); 
+    $("#newUserModal").toggle();
+  }).fail(function(result) {
+    console.log("failed to upload new user")
+  });
 
-
-
+}
 
 function getItemElement(goal) {
-  console.log(goal);
   var elem = document.createElement('div');
   var importance = 2 * goal["importance"]  + 10;
-  elem.className = 'item';
   
+  console.log("import: " + importance)
+
+  var wRand = Math.random();
+  var hRand = Math.random();
+  if (importance > 18) {
+    wRand = 0.95;
+    hRand = 0.95;
+  } else if (importance < 14) {
+    wRand = 0.5;
+    hRand = 0.3;
+  }
+  var widthClass = wRand > 0.92 ? 'w4' : wRand > 0.8 ? 'w3' : wRand > 0.6 ? 'w2' : '';
+  var heightClass = hRand > 0.85 ? 'h4' : hRand > 0.6 ? 'h3' : hRand > 0.35 ? 'h2' : '';
+ 
+  elem.className = 'item ' + widthClass + ' ' + heightClass;
   var inner = "<div class='masonryPadding'><p style='font-size : " + importance + "px;'>" + goal["title"] + "</h3><br><p style='font-size : " + importance + "px;'>" + goal["detail"] + "</p></div>"
 
   elem.innerHTML = inner;
@@ -364,16 +420,131 @@ function createFitnessTiles(data) {
     columnWidth: 200
   });
 
-  for (i = 0; i < data.length; i++) {
+  if (data != null && !data.length) {
     var elems = [];
     var fragment = document.createDocumentFragment();
-    for ( var i = 0; i < data.length && data[i]["state"] == "active"; i++ ) {
-      var elem = getItemElement(data[i]);
-      fragment.appendChild( elem );
-      elems.push( elem );
-    }
-
+    var elem = getItemElement(data);
+    fragment.appendChild( elem );
+    elems.push( elem );
     container.appendChild( fragment );
     msnry.appended( elems );
+    msnry.layout();
+  } else {
+    for (i = 0; i < data.length; i++) {
+      var elems = [];
+      var fragment = document.createDocumentFragment();
+      for ( var i = 0; i < data.length; i++ ) {
+        var elem = getItemElement(data[i]);
+        fragment.appendChild( elem );
+        elems.push( elem );
+      }
+
+      container.appendChild( fragment );
+      msnry.appended( elems );
+    }
   }
+
+
+
+  eventie.bind( container, 'click', function( event ) {
+    // don't proceed if item was not clicked on
+    if ( !classie.has( event.target, 'item' ) ) {
+      return;
+    }
+    // remove clicked element
+    msnry.remove( event.target );
+    // layout remaining item elements
+    msnry.layout();
+  }); 
 }
+
+
+
+
+
+
+/*!
+ * classie v1.0.1
+ * class helper functions
+ * from bonzo https://github.com/ded/bonzo
+ * MIT license
+ * 
+ * classie.has( elem, 'my-class' ) -> true/false
+ * classie.add( elem, 'my-new-class' )
+ * classie.remove( elem, 'my-unwanted-class' )
+ * classie.toggle( elem, 'my-class' )
+ */
+
+/*jshint browser: true, strict: true, undef: true, unused: true */
+/*global define: false, module: false */
+
+( function( window ) {
+
+'use strict';
+
+// class helper functions from bonzo https://github.com/ded/bonzo
+
+function classReg( className ) {
+  return new RegExp("(^|\\s+)" + className + "(\\s+|$)");
+}
+
+// classList support for class management
+// altho to be fair, the api sucks because it won't accept multiple classes at once
+var hasClass, addClass, removeClass;
+
+if ( 'classList' in document.documentElement ) {
+  hasClass = function( elem, c ) {
+    return elem.classList.contains( c );
+  };
+  addClass = function( elem, c ) {
+    elem.classList.add( c );
+  };
+  removeClass = function( elem, c ) {
+    elem.classList.remove( c );
+  };
+}
+else {
+  hasClass = function( elem, c ) {
+    return classReg( c ).test( elem.className );
+  };
+  addClass = function( elem, c ) {
+    if ( !hasClass( elem, c ) ) {
+      elem.className = elem.className + ' ' + c;
+    }
+  };
+  removeClass = function( elem, c ) {
+    elem.className = elem.className.replace( classReg( c ), ' ' );
+  };
+}
+
+function toggleClass( elem, c ) {
+  var fn = hasClass( elem, c ) ? removeClass : addClass;
+  fn( elem, c );
+}
+
+var classie = {
+  // full names
+  hasClass: hasClass,
+  addClass: addClass,
+  removeClass: removeClass,
+  toggleClass: toggleClass,
+  // short names
+  has: hasClass,
+  add: addClass,
+  remove: removeClass,
+  toggle: toggleClass
+};
+
+// transport
+if ( typeof define === 'function' && define.amd ) {
+  // AMD
+  define( classie );
+} else if ( typeof exports === 'object' ) {
+  // CommonJS
+  module.exports = classie;
+} else {
+  // browser global
+  window.classie = classie;
+}
+
+})( window );

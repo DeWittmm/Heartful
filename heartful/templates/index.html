@@ -158,43 +158,36 @@
     </div>
 
     <!-- newUserModal -->
-    <!-- <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="newUserModal" style="z-index : 100; padding-top : 60px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Welcome, fill out the fields below to get started!</h4>
+            <h4 class="modal-title">Welcome, create a user to get started!</h4>
           </div>
           <div class="modal-body">        
             <form class="form-signin">
               <div class="form-group">
-                <input type="text" placeholder="Name" class="form-control">
+                <input id="nameEntry" type="text" placeholder="Name" class="form-control">
+              </div>
+               <div class="form-group">
+                <input type="number" id="hrEntry" placeholder="Resting HR (bpm)" class="form-control">
+              </div>
+               <div class="form-group">
+                <input type="number" id="o2Entry" placeholder="Average SPO2" class="form-control">
               </div>
               <div class="form-group">
-                <input type="number" placeholder="Age" class="form-control">
+                <input type="number" id="ageEntry" placeholder="Age" class="form-control">
               </div>
-              <div class="form-group">
-                <input type="text" placeholder="Gender" class="form-control">
-              </div>
-              <div class="form-group">
-                <input type="number" placeholder="Weight (lb)" class="form-control">
-              </div>
-              <div class="form-group">
-                <input type="text" placeholder="Email" class="form-control">
-              </div>
-              <div class="form-group">
-                <input type="password" placeholder="Password" class="form-control">
-              </div>
-
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary">Create User</button>
+            <button type="button" onclick="submitNewUser()" class="btn btn-primary">Create User</button>
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
 
     <!-- manualDataEntryModal -->
     <div class="modal fade customModal" id="manualDataEntryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -250,7 +243,7 @@
               </div>
               <div class="form-group">
                 <p>Importance</p>
-                <input id="goalImportance" type="text" placeholder="1 - 100" class="form-control">
+                <input id="goalImportance" type="text" placeholder="1 - 5" class="form-control">
               </div>
             </form>
           </div>
