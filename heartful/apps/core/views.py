@@ -123,6 +123,8 @@ class Goals(APIView):
          serializer.save()
          return Response(serializer.data, status=status.HTTP_200_OK)
 
+    #Put request
+
 class GoalsDetails(APIView):
    def get(self, request, pk, format=None):
       user = get_User(pk)
