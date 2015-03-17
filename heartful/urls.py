@@ -31,6 +31,8 @@ urlpatterns += [
 
 urlpatterns += [
     url(r'^dataSet/$', UserDataSetView.as_view(), name='dataSet'),
+    url(r'^dataSet/(?P<pk>[0-9]+)/$', UserDataSetDetailView.as_view(), name='dataSetDetails'),
     url(r'^dataSet/entries/$', UserEntriesView.as_view()),
-    url(r'^dataSet/entries/(?P<pk>[0-9]+)/$', UserEntriesDetailView.as_view())
+    url(r'^dataSet/entries/(?P<pk>[0-9]+)/$', DataSetEntriesDetailView.as_view()),
+    url(r'^dataSet/entries/id/(?P<pk>[0-9]+)/$', UserEntriesDetailView.as_view())
 ]

@@ -31,4 +31,4 @@ class DataTypeSerializer(serializers.ModelSerializer):
 class GoalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Goal
-        fields = ('user', 'title', 'detail', 'status', 'importance',)
+        fields = ('id', 'user', 'title', 'detail', 'status', 'importance',)

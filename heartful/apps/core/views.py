@@ -34,13 +34,27 @@ class UserEntriesView(APIView):
 
        return Response(serializer.data)
 
-class UserEntriesDetailView(APIView):
-
+class DataSetEntriesDetailView(APIView):
+    
     def get(self, request, pk, format=None):
         userDataSet = get_UserDataSets(pk)
         enteries = DataEntry.objects.filter(userdataset=userDataSet.id)
         serializer = DataEntrySerializer(enteries, many=True)
-            
+        
+        return Response(serializer.data)
+
+class UserEntriesDetailView(APIView):
+    
+    def get(self, request, pk, format=None):
+        googleid = pk
+        user = get_User(googleid)
+        userSets = UserDataSet.objects.filter(user=user.id)
+        
+        enteries = []
+        for set in userSets:
+            enteries += DataEntry.objects.filter(userdataset=set.id)
+        
+        serializer = DataEntrySerializer(enteries, many=True)
         return Response(serializer.data)
 
 class UserDataSetView(APIView):
@@ -80,6 +94,16 @@ class UserDataSetView(APIView):
                 # return HttpResponse(json.dumps({"dataset": userdataset.id}), content_type='application/json', status=status.HTTP_200_OK)
 
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+
+class UserDataSetDetailView(APIView):
+    
+    def get(self, request, pk, format=None):
+        googleid = pk
+        user = get_User(googleid)
+        userSets = UserDataSet.objects.filter(user=user.id)
+        serializer = UserDataSetSerializer(userSets, many=True)
+        
+        return Response(serializer.data)
 
 #MARK: Goals
 class Goals(APIView):
