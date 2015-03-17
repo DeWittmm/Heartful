@@ -323,14 +323,35 @@ function signinCallback(authResult) {
         //hide sign in button and show name instead
         $("#googleSignInButton").css("display", "none");
         $("#userName").append("<p style='color : white'>" + userName + "</p>");
+
+        if (googleid != null) {
+          var aUrl = baseUrl + "user/"
+
+          $.ajax({
+            type: "GET",
+            url: aUrl,
+            contentType: "application/json" 
+          }).done(function(result) {
+            var found = false;
+            for (var i = 0; i < result.length; i++) {
+              if (result[i]["googleid"] == googleid) {
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              createUser();
+            }
+
+          }).fail(function(result) {
+            console.log("failed to upload new user")
+          });
+        }
+
       });
     });
   } else {
       console.log('Sign-in state: ' + authResult['error']);
-  }
-
-  if (googleid == null) {
-    createUser();
   }
 }
 
@@ -341,6 +362,30 @@ function dateCleaner(date) {
 
 function submitNewUser() {
   //post the user stuff, then do the google auth to get the google id
+
+  var name = $("#nameEntry").val();
+  var hr = $("#hrEntry").val();
+  var o2 = $("#o2Entry").val();
+  var age = $("#ageEntry").val(); 
+
+  var userData = { "googleid" : googleid, "name" : name, "heartrate" : hr, "spO2" : o2, "age" : age };
+  var json = JSON.stringify(userData);
+  var newUserUrl = baseUrl + "user/";
+
+  $.ajax({
+    type: "POST",
+    url: newUserUrl,
+    data: json,
+    contentType: "application/json" 
+  }).done(function(result) {
+    $("#nameEntry").val("");
+    $("#hrEntry").val("");
+    $("#o2Entry").val("");
+    $("#ageEntry").val(""); 
+    $("#newUserModal").toggle();
+  }).fail(function(result) {
+    console.log("failed to upload new user")
+  });
 
 }
 
