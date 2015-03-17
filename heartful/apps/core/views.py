@@ -9,6 +9,7 @@ from .serializers import *
 from .heartRateAnalyzer import *
 from django.template import loader
 from django.template.context import Context
+import copy
 
 #MARK: User
 class UserTest(APIView):
@@ -89,7 +90,7 @@ class UserDataSetView(APIView):
             multi_data = []
             for heartratedata in heartrate_json:
                dict.update(heartratedata)
-               multi_data += [dict]
+               multi_data += [copy.deepcopy(dict)]
 
             serializer = DataEntrySerializer(data=multi_data, many=True)
 
