@@ -10,4 +10,4 @@ https://github.com/DeWittmm/Heartful/wiki
 
 ## Heartful API Documentation
 
-http://docs.heartful.apiary.io/#reference/api/dataset-collection-dataset
+http://docs.heartful.apiary.io/#
