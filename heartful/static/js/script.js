@@ -39,10 +39,7 @@ function createUser () {
 }
 
 function showMyDataTile() {
-  var myDataUrl = baseUrl + "dataSet/entries/id/" + googleid + "/";
-
   drawTableLoop();
-
 
   var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
   toAppend += "<h1>My Health Data</h1>";
@@ -55,6 +52,7 @@ function showMyDataTile() {
 }
 
 function drawTableLoop() {
+  var myDataUrl = baseUrl + "dataSet/entries/id/" + googleid + "/";
   $.ajax({
     type: "GET",
     url: myDataUrl
