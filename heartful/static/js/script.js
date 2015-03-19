@@ -1,34 +1,12 @@
-var baseUrl = "http://52.10.162.213/"
-var user = { userName : "", userId : "", age : "" }
+var remoteUrl = "http://52.10.162.213/";
+var localUrl = "http://127.0.0.1:8000/";
+var baseUrl = remoteUrl;
+var googleid;
 
 var myHRData;
 
 // Load the Visualization API library and the piechart library.
 google.load('visualization', '1.0', {'packages':['corechart']});
-google.setOnLoadCallback(drawAllHRDataChart);
-
-function drawAllHRDataChart () {
-     // Create the data table.
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Topping');
-      data.addColumn('number', 'Slices');
-      data.addRows([
-        ['Mushrooms', 3],
-        ['Onions', 1],
-        ['Olives', 1], 
-        ['Zucchini', 1],
-        ['Pepperoni', 2]
-      ]);
-
-      // Set chart options
-      var options = {'title':'How Much Pizza I Ate Last Night',
-                     'width':400,
-                     'height':300};
-
-      // Instantiate and draw our chart, passing in some options.
-      var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-      chart.draw(data, options);
-}
 
 function showTile(tileName) {
   $("#tileContent").css("display", "none");
@@ -61,121 +39,145 @@ function createUser () {
 }
 
 function showMyDataTile() {
-  //allow for manual entry
+  drawTableLoop();
 
-  //do a get call to load some amount of the data
-  var myDataUrl = baseUrl + "myData/" + user.userId;
+  var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
+  toAppend += "<h1>My Health Data</h1>";
+  toAppend += '<button type="submit" style="margin-left: 70%;" class="btn btn-success" data-toggle="modal" data-target="#manualDataEntryModal">Enter New Data</button>';
+  toAppend += '<br><div class="btn-group" role="group" aria-label="..."><button type="button" onclick="showMyHRDataGraph()" id="myHRDataGraphBtn" class="btn active btn-default">Graph</button><button type="button" onclick="showMyHRDataTable()" id="myHRDataTableBtn" class="btn btn-default">Table</button></div>'
+  toAppend += '<div id="myDataChart" class="barGraph"></div>';
+  toAppend += "<div id='myHRDataTable'></div>"
 
+  $("#tileDetail").empty().append(toAppend);
+}
+
+function drawTableLoop() {
+  var myDataUrl = baseUrl + "dataSet/entries/id/" + googleid + "/";
   $.ajax({
     type: "GET",
     url: myDataUrl
   }).done(function(result) {
     console.log("got some data");
     myHRData = result;
-    drawMyHRGraph();
+    drawAHRGraph("#myDataChart", "#myHRDataTable", "My Heart Rate", myHRData);
   }).fail(function(error){
     console.log("could not get myData");
     console.log(error);
-  });   
-
-
-  var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>"; 
-  toAppend += "<h1>My Health Data</h1>";
-  toAppend += '<button type="submit" style="margin-left: 70%;" class="btn btn-success" data-toggle="modal" data-target="#manualDataEntryModal">Enter New Data</button>';
-  toAppend += '<br><div class="btn-group" role="group" aria-label="..."><button type="button" onclick="showMyHRDataGraph()" id="myHRDataGraphBtn" class="btn active btn-default">Graph</button><button type="button" onclick="showMyHRDataTable()" id="myHRDataTableBtn" class="btn btn-default">Table</button></div>'
-  toAppend += '<div id="myDataChart" class="barGraph"></div>';
-  
-  $("#tileDetail").empty().append(toAppend);
+  });
+  setTimeout(drawTableLoop, 1000);
 }
 
 function showMyHRDataTable() {
-  $("#myHRDataGraphBtn").addClass("active")
+  $("#myHRDataTableBtn").addClass("active")
   $("#myHRDataGraphBtn").removeClass("active")
 
-  drawMyHRTable();
+  drawATable("#myHRDataTable", "#myDataChart", myHRData);
 }
 
 function showMyHRDataGraph() {
-  $("#myHRDataGraphBtn").removeClass("active")
+  $("#myHRDataTableBtn").removeClass("active")
   $("#myHRDataGraphBtn").addClass("active")
 
-  drawMyHRGraph();
+  drawAHRGraph("#myDataChart", "#myHRDataTable", "My Heart Rate", myHRData);
 }
 
-function drawMyHRTable() {
-  if ($("#myHRDataTable").length) {
-    //element already exists...just show it
-    $("#myHRDataTable").css("display", "inline")
-    $("#myHRDataGraph").css("display", "none");
-  } else {
-    //create the table, then show it
-    //myHRData is already populated (from when we navigated to tile)
+function drawATable(activate, deactivate, dataSource) {
+  $(deactivate).css("display", "none");
+  $(activate).css("display", "inline");
+
+  var toAppend = "<div class='table-responsive'>";
+  toAppend += '<table class="table table-striped">';
+  toAppend += '<thead style="display: table-header-group;"><tr><th>Date</th><th>Heart Rate (bpm)</th></tr></thead>';
+  toAppend += '<tbody>';
+
+  var json = dataSource;
+
+  for (i = 0; i < json.length; i++) {
+    var date = dateCleaner(json[i]["date_time"]);
+    var value = json[i]["value"];
+    toAppend += '<tr><td>' + date + '</td><td>' + value + '</td></tr>'
   }
 
+  toAppend += "</tbody></table></div>";
+  $(activate).empty().append(toAppend);
 }
 
-function drawMyHRGraph() {
-  if ($("#myHRDataGraph").length) {
-    $("#myHRDataGraph").css("display", "inline");
-    $("#myHRDataTable").css("display", "none");
-  } else {
-    var data = new google.visualization.DataTable();
+function drawAHRGraph(activate, deactivate, title, dataSource) {
+  $(activate).css("display", "inline");
+  $(deactivate).css("display", "none");
 
-    data.addColumn('string', 'Date');
-    data.addColumn('number', 'HR');
 
-    for (i = 0; i < json["XXX"]; i++) {
-      data.addRows([json["XXX"][i]["date"]], json["XXX"][i]["hr"]);
-    }
+  var data = new google.visualization.DataTable();
 
-    // data.addRows([
-    //   ['Mushrooms', 3],
-    //   ['Onions', 1],
-    //   ['Olives', 1], 
-    //   ['Zucchini', 1],
-    //   ['Pepperoni', 2]
-    // ]);
+  data.addColumn('string', 'Date');
+  data.addColumn('number', 'HR (bpm)');
 
-    var options = {'title':'My Heart Rate', 'width':800, 'height':500};
+  var json = dataSource;
 
-    //call draw() again for the chart
-    var chart = new google.visualization.ColumnChart($("#myDataChart")[0]);
-    chart.draw(data, options);
+  for (i = 0; i < json.length; i++) {
+    var date = dateCleaner(json[i]["date_time"]);
+    var value = json[i]["value"];
+    data.addRows([
+      [date, value]
+    ]);
   }
+
+  var options = {'title': title, 'width':800, 'height':500};
+
+  //call draw() again for the chart
+  var chart = new google.visualization.ColumnChart($(activate)[0]);
+  chart.draw(data, options);
 }
+
 
 function showSleepTile() {
   var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
   toAppend += "<br><h1>Sleep Tile Stuff</h1>";
-  
+
   $("#tileDetail").empty().append(toAppend);
 }
 
 function showFitnessTile() {
-  //var fitnessUrl = baseUrl + "fitness/" + user.userId;
-  var fitnessUrl = baseUrl + "test";
-  var fitnessData = {};
+  var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
+  toAppend += "<br><h1>Fitness Tile Stuff</h1>";
+  toAppend += '<button type="submit" style="margin-left: 70%;" class="btn btn-success" data-toggle="modal" data-target="#newFitnessGoalModal">Enter New Fitness Goal</button>';
+  toAppend += "<div class='masonry' id='fitnessMasonry'></div>";
+
+  $("#tileDetail").empty().append(toAppend);
+
+  var fitnessUrl = baseUrl + "fitness/";
 
   $.ajax({
     type: "GET",
-    url: fitnessUrl,
-    data: fitnessData
+    url: fitnessUrl
   }).done(function(result) {
-    //want to get things like target HR and baseline HR
+    createFitnessTiles(result);
+  });
+}
 
-    console.log(result);
+function submitNewGoal() {
+  var fitnessUrl = baseUrl + "fitness/";
 
+  var title = $("#goalName").val();
+  var detail = $("#goalDetail").val();
+  var importance = $("#goalImportance").val();
 
-  });   
+  var fitnessData = { "googleId" : googleid, "title" : title, "detail" : detail, "status" : "active", "importance" : importance };
+  var json = JSON.stringify(fitnessData);
 
-      var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
-    // toAppend += "<br><p>Baseline Heart Rate: " + userFitness.baselineHR + "</p><br><p>Target Heart Rate: " + userFitness.targetHR + "</p>"  
-    toAppend += "<br><h1>Fitness Tile Stuff</h1>";
-
-
-    $("#tileDetail").empty().append(toAppend);
-
-  
+  $.ajax({
+    type: "POST",
+    url: fitnessUrl,
+    data: json,
+    contentType: "application/json"
+  }).done(function(result) {
+    console.log("successful submit of new goal");
+    $("#goalName").val("");
+    $("#goalDetail").val("");
+    $("#goalImportance").val("");
+    $("#newFitnessGoalModal").toggle();
+    createFitnessTiles(result);
+  });
 }
 
 function showCaloriesTile() {
@@ -189,8 +191,8 @@ function showIntensityTile() {
   var highTargetHR = 175;
   var maxHR = 200;
 
-  var targetHRRangeUrl = baseUrl + "targetHR";
-  var targetAge = { targetAge : user.age };
+  var targetHRRangeUrl = baseUrl + "analysis/";
+  var targetAge = { age : 22 };
 
   $.ajax({
     type: "GET",
@@ -206,7 +208,7 @@ function showIntensityTile() {
   }).fail(function(error){
     console.log("could not get all user data");
     console.log(error);
-  }); 
+  });
 
 
   var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
@@ -214,14 +216,14 @@ function showIntensityTile() {
   toAppend += "<br><h4><b>Lower Heart Rate Target:</b> " + lowTargetHR + " bpm</h4>";
   toAppend += "<br><h4><b>Upper Heart Rate Target:</b> " + highTargetHR + " bpm</h4>";
   toAppend += "<br><h4><b>Max Heart Rate:</b> " + maxHR + " bpm</h4>";
-  toAppend += "<br><div id='exerciseIntensityRangeTbl'><div>"
+  toAppend += "<br><div id='exerciseIntensityRangeTbl'><div>";
 
   $("#tileDetail").empty().append(toAppend);
 
-  showExerciseIntensityTable();
+  showExerciseIntensityTable(lowTargetHR, highTargetHR);
 }
 
-function showExerciseIntensityTable() {
+function showExerciseIntensityTable(lowTargetHR, highTargetHR) {
   //create table
 
   var toAppend = "<div class='table-responsive'>";
@@ -229,18 +231,19 @@ function showExerciseIntensityTable() {
   toAppend += '<thead style="display: table-header-group;"><tr><th>Intensity</th><th>Heart Rate Range</th></tr></thead>';
   toAppend += '<tbody>';
 
-  for (i = 0; i < 5; i++) {
-    toAppend += '<tr><td>' + i + '</td><td>' + i + '</td></tr>'
-  }
+  toAppend += '<tr><td>Gentle Walking</td><td>' + lowTargetHR + '</td></tr>'
+  toAppend += '<tr><td>Low Intensity Exercise</td><td>' + (lowTargetHR + 30) + '</td></tr>'
+  toAppend += '<tr><td>Moderate Intensity Exercise</td><td>' + (highTargetHR - 30) + '</td></tr>'
+  toAppend += '<tr><td>High Intensity Exercise</td><td>' + (highTargetHR + 10) + '</td></tr>'
+
 
   toAppend += "</tbody></table></div>";
   $("#exerciseIntensityRangeTbl").empty().append(toAppend);
 }
 
 function showOtherUsersTile() {
-
   //do a get call to load data about all the users
-  var allDataUrl = baseUrl + "userData" 
+  var allDataUrl = baseUrl + "dataSet/entries/"
 
   $.ajax({
     type: "GET",
@@ -248,16 +251,18 @@ function showOtherUsersTile() {
   }).done(function(result) {
     console.log("got some data")
     allHRData = result;
-    drawAllHRGraph();
+    drawAHRGraph("#allHRDataGraph", "#allHRDataTable", "All Heart Rate Data", allHRData);
   }).fail(function(error){
     console.log("could not get all user data")
     console.log(error)
-  });  
+  });
 
 
   var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
   toAppend += "<br><h1>All Heartful Users' Data</h1>";
   toAppend += '<br><div class="btn-group" role="group" aria-label="..."><button type="button" onclick="showAllHRDataGraph()" id="allHRDataGraphBtn" class="btn active btn-default">Graph</button><button type="button" onclick="showAllHRDataTable()" id="allHRDataTableBtn" class="btn btn-default">Table</button></div>'
+  toAppend += "<div id='allHRDataGraph'></div>"
+  toAppend += "<div id='allHRDataTable'></div>"
 
   $("#tileDetail").empty().append(toAppend);
 }
@@ -266,56 +271,14 @@ function showAllHRDataTable() {
   $("#allHRDataTableBtn").addClass("active")
   $("#allHRDataGraphBtn").removeClass("active")
 
-  drawAllHRTable();
+  drawATable("#allHRDataTable", "#allHRDataGraph", allHRData);
 }
 
 function showAllHRDataGraph() {
   $("#allHRDataGraphBtn").addClass("active")
   $("#allHRDataTableBtn").removeClass("active")
 
-  drawAllHRGraph();
-}
-
-function drawAllHRTable() {
-  if ($("#allHRDataTable").length) {
-    //element already exists...just show it
-    $("#allHRDataTable").css("display", "inline")
-    $("#allHRDataGraph").css("display", "none");
-  } else {
-    //create the table, then show it
-    //myHRData is already populated (from when we navigated to tile)
-  }
-
-}
-
-function drawAllHRGraph() {
-  if ($("#allHRDataGraph").length) {
-    $("#allHRDataGraph").css("display", "inline");
-    $("#allHRDataTable").css("display", "none");
-  } else {
-    var data = new google.visualization.DataTable();
-
-    data.addColumn('string', 'Date');
-    data.addColumn('number', 'HR');
-
-    for (i = 0; i < json["XXX"]; i++) {
-      data.addRows([json["XXX"][i]["date"]], json["XXX"][i]["hr"]);
-    }
-
-    // data.addRows([
-    //   ['Mushrooms', 3],
-    //   ['Onions', 1],
-    //   ['Olives', 1], 
-    //   ['Zucchini', 1],
-    //   ['Pepperoni', 2]
-    // ]);
-
-    var options = {'title':'All Heart Rate Data', 'width':800, 'height':500};
-
-    //call draw() again for the chart
-    var chart = new google.visualization.ColumnChart($("#myDataChart")[0]);
-    chart.draw(data, options);
-  }
+  drawAHRGraph("#allHRDataGraph", "#allHRDataTable", "All Heart Rate Data", allHRData);
 }
 
 function goToHomePage() {
@@ -324,50 +287,267 @@ function goToHomePage() {
   $("#tileDetail").empty();
 }
 
+
+//TODO: Doesn't seem to work!  The /dataSet url accepts the example data on github documentation, but not user entered data -- detail not found
 function submitManualData() {
   var hr = $("#manualEntryHR").val();
-  var spo2 = $("#manualEntrySPO2").val();
   var date = $("#manualEntryDate").val();
-  var tag = $("#manualEntryTag").val();
+  var type = $("#manualEntryType").val();
 
-  var json = { "userId" : user.userId, "day" : date, "tag" : tag, "HR" : hr, "SPO2" : spo2 };
-  var manualDataUrl = baseUrl + "userData";
+  var hrData = { "googleid" : googleid, "type" : type, "heartrate_values" : [{ "value" : hr, "unit" : "bpm", "date_time" : date }] };
+  var json = JSON.stringify(hrData);
+  var manualDataUrl = baseUrl + "dataSet/";
 
   $.ajax({
     type: "POST",
     url: manualDataUrl,
-    data: json
+    data: json,
+    contentType: "application/json"
   }).done(function(result) {
       $("#manualEntryHR").val("");
-      $("#manualEntrySPO2").val("");
-      $("#manualEntryDate").val("");
-      $("#manualEntryTag").val("");
+      $("#manualEntryDate").val("2009-07-24 21:45:34-07");
+      $("#manualEntryTag").val("sitting");
       $("#manualDataEntryModal").toggle();
   }).fail(function(result) {
     console.log("failed to upload data manually")
   });
-
-  console.log(hr + " " + spo2)
 }
 
 function signinCallback(authResult) {
-    if (authResult['status']['signed_in']) {
-        gapi.client.load('plus','v1', function() {
-            var request = gapi.client.plus.people.get({
-               'userId': 'me'
-            });
-            request.execute(function(resp) {
-              user.userName = resp.displayName;
-              user.userId = resp.result.id;
-              console.log(user.userName + " " + user.userId);
+  if (authResult['status']['signed_in']) {
+    gapi.client.load('plus','v1', function() {
+      var request = gapi.client.plus.people.get({
+         'userId': 'me'
+      });
+      request.execute(function(resp) {
+        userName = resp.displayName;
+        googleid = resp.result.id;
 
-              //hide sign in button and show name instead
-              $("#googleSignInButton").css("display", "none");
-              $("#userName").append("<p>" + user.userName + "</p>");
-            });
-        });
-    } else {
-        console.log('Sign-in state: ' + authResult['error']);
-    }
+        //hide sign in button and show name instead
+        $("#googleSignInButton").css("display", "none");
+        $("#userName").append("<p style='color : white; margin-left : 70%'>Welcome " + userName + "</p>");
+
+        if (googleid != null) {
+          var aUrl = baseUrl + "user/"
+
+          $.ajax({
+            type: "GET",
+            url: aUrl,
+            contentType: "application/json"
+          }).done(function(result) {
+            var found = false;
+            for (var i = 0; i < result.length; i++) {
+              if (result[i]["googleid"] == googleid) {
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              createUser();
+            }
+
+          }).fail(function(result) {
+            console.log("failed to upload new user")
+          });
+        }
+
+      });
+    });
+  } else {
+      console.log('Sign-in state: ' + authResult['error']);
+  }
 }
 
+function dateCleaner(date) {
+  var cleanDate = new Date(date);
+  return "" + (cleanDate.getMonth() + 1) + "/" + cleanDate.getDate() + "/" + cleanDate.getFullYear();
+}
+
+function submitNewUser() {
+  //post the user stuff, then do the google auth to get the google id
+
+  var name = $("#nameEntry").val();
+  var hr = $("#hrEntry").val();
+  var o2 = $("#o2Entry").val();
+  var age = $("#ageEntry").val();
+
+  var userData = { "googleid" : googleid, "name" : name, "heartrate" : hr, "spO2" : o2, "age" : age };
+  var json = JSON.stringify(userData);
+  var newUserUrl = baseUrl + "user/";
+
+  $.ajax({
+    type: "POST",
+    url: newUserUrl,
+    data: json,
+    contentType: "application/json"
+  }).done(function(result) {
+    $("#nameEntry").val("");
+    $("#hrEntry").val("");
+    $("#o2Entry").val("");
+    $("#ageEntry").val("");
+    $("#newUserModal").toggle();
+  }).fail(function(result) {
+    console.log("failed to upload new user")
+  });
+
+}
+
+function getItemElement(goal) {
+  var elem = document.createElement('div');
+  var importance = 2 * goal["importance"]  + 10;
+
+  console.log("import: " + importance)
+
+  var wRand = Math.random();
+  var hRand = Math.random();
+  if (importance > 18) {
+    wRand = 0.95;
+    hRand = 0.95;
+  } else if (importance < 14) {
+    wRand = 0.5;
+    hRand = 0.3;
+  }
+  var widthClass = wRand > 0.92 ? 'w4' : wRand > 0.8 ? 'w3' : wRand > 0.6 ? 'w2' : '';
+  var heightClass = hRand > 0.85 ? 'h4' : hRand > 0.6 ? 'h3' : hRand > 0.35 ? 'h2' : '';
+
+  elem.className = 'item ' + widthClass + ' ' + heightClass;
+  var inner = "<div class='masonryPadding'><p style='font-size : " + importance + "px;'>" + goal["title"] + "</h3><br><p style='font-size : " + importance + "px;'>" + goal["detail"] + "</p></div>"
+
+  elem.innerHTML = inner;
+  return elem;
+}
+
+function createFitnessTiles(data) {
+  var container = document.querySelector('#fitnessMasonry');
+  var msnry = new Masonry( container, {
+    columnWidth: 200
+  });
+
+  if (data != null && !data.length) {
+    var elems = [];
+    var fragment = document.createDocumentFragment();
+    var elem = getItemElement(data);
+    fragment.appendChild( elem );
+    elems.push( elem );
+    container.appendChild( fragment );
+    msnry.appended( elems );
+    msnry.layout();
+  } else {
+    for (i = 0; i < data.length; i++) {
+      var elems = [];
+      var fragment = document.createDocumentFragment();
+      for ( var i = 0; i < data.length; i++ ) {
+        var elem = getItemElement(data[i]);
+        fragment.appendChild( elem );
+        elems.push( elem );
+      }
+
+      container.appendChild( fragment );
+      msnry.appended( elems );
+    }
+  }
+
+
+
+  eventie.bind( container, 'click', function( event ) {
+    // don't proceed if item was not clicked on
+    if ( !classie.has( event.target, 'item' ) ) {
+      return;
+    }
+    // remove clicked element
+    msnry.remove( event.target );
+    // layout remaining item elements
+    msnry.layout();
+  });
+}
+
+
+
+
+
+
+/*!
+ * classie v1.0.1
+ * class helper functions
+ * from bonzo https://github.com/ded/bonzo
+ * MIT license
+ *
+ * classie.has( elem, 'my-class' ) -> true/false
+ * classie.add( elem, 'my-new-class' )
+ * classie.remove( elem, 'my-unwanted-class' )
+ * classie.toggle( elem, 'my-class' )
+ */
+
+/*jshint browser: true, strict: true, undef: true, unused: true */
+/*global define: false, module: false */
+
+( function( window ) {
+
+'use strict';
+
+// class helper functions from bonzo https://github.com/ded/bonzo
+
+function classReg( className ) {
+  return new RegExp("(^|\\s+)" + className + "(\\s+|$)");
+}
+
+// classList support for class management
+// altho to be fair, the api sucks because it won't accept multiple classes at once
+var hasClass, addClass, removeClass;
+
+if ( 'classList' in document.documentElement ) {
+  hasClass = function( elem, c ) {
+    return elem.classList.contains( c );
+  };
+  addClass = function( elem, c ) {
+    elem.classList.add( c );
+  };
+  removeClass = function( elem, c ) {
+    elem.classList.remove( c );
+  };
+}
+else {
+  hasClass = function( elem, c ) {
+    return classReg( c ).test( elem.className );
+  };
+  addClass = function( elem, c ) {
+    if ( !hasClass( elem, c ) ) {
+      elem.className = elem.className + ' ' + c;
+    }
+  };
+  removeClass = function( elem, c ) {
+    elem.className = elem.className.replace( classReg( c ), ' ' );
+  };
+}
+
+function toggleClass( elem, c ) {
+  var fn = hasClass( elem, c ) ? removeClass : addClass;
+  fn( elem, c );
+}
+
+var classie = {
+  // full names
+  hasClass: hasClass,
+  addClass: addClass,
+  removeClass: removeClass,
+  toggleClass: toggleClass,
+  // short names
+  has: hasClass,
+  add: addClass,
+  remove: removeClass,
+  toggle: toggleClass
+};
+
+// transport
+if ( typeof define === 'function' && define.amd ) {
+  // AMD
+  define( classie );
+} else if ( typeof exports === 'object' ) {
+  // CommonJS
+  module.exports = classie;
+} else {
+  // browser global
+  window.classie = classie;
+}
+
+})( window );
