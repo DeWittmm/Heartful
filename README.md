@@ -2,7 +2,7 @@
 
 ## Overview
 
-Heartful is an API for saving and analyzing user health data. It integrates with the Pulse iOS application to track your fitness and analyze health data gathered from medical devices.
+Heartful is an API for saving and analyzing user health data. It integrates with the [Pulse iOS application] (https://github.com/DeWittmm/pulse) to track your fitness and analyze gathered health data.
 
 ## Heartful Wiki
 
