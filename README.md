@@ -2,7 +2,7 @@
 
 ## Overview
 
-Heartful is an API for saving and analyzing user health data. It integrates with the [Pulse iOS application] (https://github.com/DeWittmm/pulse) to track your fitness and analyze gathered health data.
+Heartful is Django web app and an API for saving and analyzing user health data. It integrates with the [Pulse iOS application] (https://github.com/DeWittmm/pulse) to track your fitness and analyze gathered health data.
 
 ## Heartful Wiki
 
