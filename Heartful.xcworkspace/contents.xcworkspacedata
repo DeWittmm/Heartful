@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:README.md">
+   </FileRef>
+   <Group
+      location = "group:heartful"
+      name = "heartful">
+      <Group
+         location = "group:apps"
+         name = "apps">
+         <Group
+            location = "group:core"
+            name = "core">
+            <FileRef
+               location = "group:admin.py">
+            </FileRef>
+            <FileRef
+               location = "group:heartRateAnalyzer.py">
+            </FileRef>
+            <FileRef
+               location = "group:models.py">
+            </FileRef>
+            <FileRef
+               location = "group:serializers.py">
+            </FileRef>
+            <FileRef
+               location = "group:tests.py">
+            </FileRef>
+            <FileRef
+               location = "group:views.py">
+            </FileRef>
+         </Group>
+      </Group>
+      <FileRef
+         location = "group:db.sqlite3">
+      </FileRef>
+      <FileRef
+         location = "group:manage.py">
+      </FileRef>
+      <Group
+         location = "group:settings"
+         name = "settings">
+         <FileRef
+            location = "group:settings.py">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:static"
+         name = "static">
+         <Group
+            location = "group:css"
+            name = "css">
+            <FileRef
+               location = "group:index.css">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:images"
+            name = "images">
+            <FileRef
+               location = "group:heart.ico">
+            </FileRef>
+            <FileRef
+               location = "group:heart.jpg">
+            </FileRef>
+            <FileRef
+               location = "group:heart_transparent.gif">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:js"
+            name = "js">
+            <FileRef
+               location = "group:script.js">
+            </FileRef>
+         </Group>
+      </Group>
+      <Group
+         location = "group:templates"
+         name = "templates">
+         <FileRef
+            location = "group:aboutUs.html">
+         </FileRef>
+         <Group
+            location = "group:core"
+            name = "core">
+         </Group>
+         <FileRef
+            location = "group:index.html">
+         </FileRef>
+      </Group>
+      <FileRef
+         location = "group:urls.py">
+      </FileRef>
+      <FileRef
+         location = "group:wsgi.py">
+      </FileRef>
+   </Group>
+</Workspace>
