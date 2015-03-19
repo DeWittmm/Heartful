@@ -62,7 +62,7 @@ function showMyDataTile() {
   toAppend += "<div id='myHRDataTable'></div>"
 
   $("#tileDetail").empty().append(toAppend);
-  setTimeout(showMyDataTile, 500);
+  setTimeout(showMyDataTile, 5 * 1000);
 }
 
 function showMyHRDataTable() {
