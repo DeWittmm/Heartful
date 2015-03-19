@@ -20,10 +20,9 @@ class UserTest(APIView):
         return Response(serializer.data)
     
     def post(self, request, format=None):
-#        print(request.data["googleid"])
         gid = request.data["googleid"]
 
-        if User.objects.filter(googleid=gid) != None:
+        if len(User.objects.filter(googleid=gid)) == 0:
             serializer = UserSerializer(data=request.DATA)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
@@ -76,12 +75,14 @@ class UserDataSetView(APIView):
         print(str(user.name) + " " + str(user.id))
         activity_type = request.data["type"]
         
-        userdatasetserializer = UserDataSetSerializer(data={"user": user.id, "type": activity_type})
-        if userdatasetserializer.is_valid(raise_exception=True):
-            userdataset = userdatasetserializer.save()
-        else:
-            userdataset = None
-            print("userdatasetserializer not valid")
+        userdataset = UserDataSet.objects.filter(user=user.id, type=activity_type).first()
+        if userdataset == None:
+            userdatasetserializer = UserDataSetSerializer(data={"user": user.id, "type": activity_type})
+            if userdatasetserializer.is_valid(raise_exception=True):
+                userdataset = userdatasetserializer.save()
+            else:
+                userdataset = None
+                print("userdatasetserializer not valid")
 
         if userdataset:
             heartrate_json = request.data["heartrate_values"]
