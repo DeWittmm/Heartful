@@ -51,17 +51,18 @@ function showMyDataTile() {
   }).fail(function(error){
     console.log("could not get myData");
     console.log(error);
-  });   
+  });
 
 
-  var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>"; 
+  var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
   toAppend += "<h1>My Health Data</h1>";
   toAppend += '<button type="submit" style="margin-left: 70%;" class="btn btn-success" data-toggle="modal" data-target="#manualDataEntryModal">Enter New Data</button>';
   toAppend += '<br><div class="btn-group" role="group" aria-label="..."><button type="button" onclick="showMyHRDataGraph()" id="myHRDataGraphBtn" class="btn active btn-default">Graph</button><button type="button" onclick="showMyHRDataTable()" id="myHRDataTableBtn" class="btn btn-default">Table</button></div>'
   toAppend += '<div id="myDataChart" class="barGraph"></div>';
   toAppend += "<div id='myHRDataTable'></div>"
-  
+
   $("#tileDetail").empty().append(toAppend);
+  setTimeout(showMyDataTile, 500);
 }
 
 function showMyHRDataTable() {
@@ -81,7 +82,7 @@ function showMyHRDataGraph() {
 function drawATable(activate, deactivate, dataSource) {
   $(deactivate).css("display", "none");
   $(activate).css("display", "inline");
-  
+
   var toAppend = "<div class='table-responsive'>";
   toAppend += '<table class="table table-striped">';
   toAppend += '<thead style="display: table-header-group;"><tr><th>Date</th><th>Heart Rate (bpm)</th></tr></thead>';
@@ -101,8 +102,8 @@ function drawATable(activate, deactivate, dataSource) {
 
 function drawAHRGraph(activate, deactivate, title, dataSource) {
   $(activate).css("display", "inline");
-  $(deactivate).css("display", "none");  
-  
+  $(deactivate).css("display", "none");
+
 
   var data = new google.visualization.DataTable();
 
@@ -114,7 +115,7 @@ function drawAHRGraph(activate, deactivate, title, dataSource) {
   for (i = 0; i < json.length; i++) {
     var date = dateCleaner(json[i]["date_time"]);
     var value = json[i]["value"];
-    data.addRows([ 
+    data.addRows([
       [date, value]
     ]);
   }
@@ -130,7 +131,7 @@ function drawAHRGraph(activate, deactivate, title, dataSource) {
 function showSleepTile() {
   var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
   toAppend += "<br><h1>Sleep Tile Stuff</h1>";
-  
+
   $("#tileDetail").empty().append(toAppend);
 }
 
@@ -149,7 +150,7 @@ function showFitnessTile() {
     url: fitnessUrl
   }).done(function(result) {
     createFitnessTiles(result);
-  });   
+  });
 }
 
 function submitNewGoal() {
@@ -166,7 +167,7 @@ function submitNewGoal() {
     type: "POST",
     url: fitnessUrl,
     data: json,
-    contentType: "application/json" 
+    contentType: "application/json"
   }).done(function(result) {
     console.log("successful submit of new goal");
     $("#goalName").val("");
@@ -205,7 +206,7 @@ function showIntensityTile() {
   }).fail(function(error){
     console.log("could not get all user data");
     console.log(error);
-  }); 
+  });
 
 
   var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
@@ -240,7 +241,7 @@ function showExerciseIntensityTable(lowTargetHR, highTargetHR) {
 
 function showOtherUsersTile() {
   //do a get call to load data about all the users
-  var allDataUrl = baseUrl + "dataSet/entries/" 
+  var allDataUrl = baseUrl + "dataSet/entries/"
 
   $.ajax({
     type: "GET",
@@ -252,7 +253,7 @@ function showOtherUsersTile() {
   }).fail(function(error){
     console.log("could not get all user data")
     console.log(error)
-  });  
+  });
 
 
   var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
@@ -285,7 +286,7 @@ function goToHomePage() {
 }
 
 
-//TODO: Doesn't seem to work!  The /dataSet url accepts the example data on github documentation, but not user entered data -- detail not found 
+//TODO: Doesn't seem to work!  The /dataSet url accepts the example data on github documentation, but not user entered data -- detail not found
 function submitManualData() {
   var hr = $("#manualEntryHR").val();
   var date = $("#manualEntryDate").val();
@@ -299,7 +300,7 @@ function submitManualData() {
     type: "POST",
     url: manualDataUrl,
     data: json,
-    contentType: "application/json" 
+    contentType: "application/json"
   }).done(function(result) {
       $("#manualEntryHR").val("");
       $("#manualEntryDate").val("2009-07-24 21:45:34-07");
@@ -330,7 +331,7 @@ function signinCallback(authResult) {
           $.ajax({
             type: "GET",
             url: aUrl,
-            contentType: "application/json" 
+            contentType: "application/json"
           }).done(function(result) {
             var found = false;
             for (var i = 0; i < result.length; i++) {
@@ -366,7 +367,7 @@ function submitNewUser() {
   var name = $("#nameEntry").val();
   var hr = $("#hrEntry").val();
   var o2 = $("#o2Entry").val();
-  var age = $("#ageEntry").val(); 
+  var age = $("#ageEntry").val();
 
   var userData = { "googleid" : googleid, "name" : name, "heartrate" : hr, "spO2" : o2, "age" : age };
   var json = JSON.stringify(userData);
@@ -376,12 +377,12 @@ function submitNewUser() {
     type: "POST",
     url: newUserUrl,
     data: json,
-    contentType: "application/json" 
+    contentType: "application/json"
   }).done(function(result) {
     $("#nameEntry").val("");
     $("#hrEntry").val("");
     $("#o2Entry").val("");
-    $("#ageEntry").val(""); 
+    $("#ageEntry").val("");
     $("#newUserModal").toggle();
   }).fail(function(result) {
     console.log("failed to upload new user")
@@ -392,7 +393,7 @@ function submitNewUser() {
 function getItemElement(goal) {
   var elem = document.createElement('div');
   var importance = 2 * goal["importance"]  + 10;
-  
+
   console.log("import: " + importance)
 
   var wRand = Math.random();
@@ -406,7 +407,7 @@ function getItemElement(goal) {
   }
   var widthClass = wRand > 0.92 ? 'w4' : wRand > 0.8 ? 'w3' : wRand > 0.6 ? 'w2' : '';
   var heightClass = hRand > 0.85 ? 'h4' : hRand > 0.6 ? 'h3' : hRand > 0.35 ? 'h2' : '';
- 
+
   elem.className = 'item ' + widthClass + ' ' + heightClass;
   var inner = "<div class='masonryPadding'><p style='font-size : " + importance + "px;'>" + goal["title"] + "</h3><br><p style='font-size : " + importance + "px;'>" + goal["detail"] + "</p></div>"
 
@@ -455,7 +456,7 @@ function createFitnessTiles(data) {
     msnry.remove( event.target );
     // layout remaining item elements
     msnry.layout();
-  }); 
+  });
 }
 
 
@@ -468,7 +469,7 @@ function createFitnessTiles(data) {
  * class helper functions
  * from bonzo https://github.com/ded/bonzo
  * MIT license
- * 
+ *
  * classie.has( elem, 'my-class' ) -> true/false
  * classie.add( elem, 'my-new-class' )
  * classie.remove( elem, 'my-unwanted-class' )
