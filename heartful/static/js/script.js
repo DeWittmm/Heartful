@@ -41,6 +41,20 @@ function createUser () {
 function showMyDataTile() {
   var myDataUrl = baseUrl + "dataSet/entries/id/" + googleid + "/";
 
+  drawTableLoop();
+
+
+  var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
+  toAppend += "<h1>My Health Data</h1>";
+  toAppend += '<button type="submit" style="margin-left: 70%;" class="btn btn-success" data-toggle="modal" data-target="#manualDataEntryModal">Enter New Data</button>';
+  toAppend += '<br><div class="btn-group" role="group" aria-label="..."><button type="button" onclick="showMyHRDataGraph()" id="myHRDataGraphBtn" class="btn active btn-default">Graph</button><button type="button" onclick="showMyHRDataTable()" id="myHRDataTableBtn" class="btn btn-default">Table</button></div>'
+  toAppend += '<div id="myDataChart" class="barGraph"></div>';
+  toAppend += "<div id='myHRDataTable'></div>"
+
+  $("#tileDetail").empty().append(toAppend);
+}
+
+function drawTableLoop() {
   $.ajax({
     type: "GET",
     url: myDataUrl
@@ -52,17 +66,7 @@ function showMyDataTile() {
     console.log("could not get myData");
     console.log(error);
   });
-
-
-  var toAppend = "<button onclick='goToHomePage()'>&#10096; Home</button>";
-  toAppend += "<h1>My Health Data</h1>";
-  toAppend += '<button type="submit" style="margin-left: 70%;" class="btn btn-success" data-toggle="modal" data-target="#manualDataEntryModal">Enter New Data</button>';
-  toAppend += '<br><div class="btn-group" role="group" aria-label="..."><button type="button" onclick="showMyHRDataGraph()" id="myHRDataGraphBtn" class="btn active btn-default">Graph</button><button type="button" onclick="showMyHRDataTable()" id="myHRDataTableBtn" class="btn btn-default">Table</button></div>'
-  toAppend += '<div id="myDataChart" class="barGraph"></div>';
-  toAppend += "<div id='myHRDataTable'></div>"
-
-  $("#tileDetail").empty().append(toAppend);
-  setTimeout(showMyDataTile, 5 * 1000);
+  setTimeout(drawTableLoop, 1000);
 }
 
 function showMyHRDataTable() {
